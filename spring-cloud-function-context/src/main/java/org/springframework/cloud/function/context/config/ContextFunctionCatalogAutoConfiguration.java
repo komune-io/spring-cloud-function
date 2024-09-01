@@ -184,6 +184,11 @@ public class ContextFunctionCatalogAutoConfiguration {
 		public JsonMapper jsonMapper(ApplicationContext context) {
 			String preferredMapper = context.getEnvironment().getProperty(JSON_MAPPER_PROPERTY);
 			if (StringUtils.hasText(preferredMapper)) {
+				// KOMUNE Modification
+//				if ("kSerialization".equals(preferredMapper) && ClassUtils.isPresent("kotlinx.serialization.json.Json", null)) {
+//					return kSerialization(context);
+//				} else
+				// KOMUNE End Of Modification
 				if ("gson".equals(preferredMapper) && ClassUtils.isPresent("com.google.gson.Gson", null)) {
 					return gson(context);
 				}
@@ -212,7 +217,21 @@ public class ContextFunctionCatalogAutoConfiguration {
 			}
 			return new GsonMapper(gson);
 		}
+		// KOMUNE Modification
+//		private JsonMapper kSerialization(ApplicationContext context) {
+//			Json json;
+//			try {
+//				json = context.getBean(Json.class);
+//			}
+//			catch (Exception e) {
+//				json =  KSerializationMapper.Companion.getDefaultJson();
+//			}
+//			return new KSerializationMapper(json);
+//		}
+		// KOMUNE End Of Modification
 
+		// KOMUNE Modification
+		// THIS WILL BE FIXED BE THE NEXT spring CLOUD VERSION be the commit 1cd93cb27000c2bfeca43882961edf22c3000655
 		private JsonMapper jackson(ApplicationContext context) {
 			ObjectMapper mapper;
 			try {
@@ -227,5 +246,6 @@ public class ContextFunctionCatalogAutoConfiguration {
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			return new JacksonMapper(mapper);
 		}
+		// KOMUNE End Of Modification
 	}
 }
