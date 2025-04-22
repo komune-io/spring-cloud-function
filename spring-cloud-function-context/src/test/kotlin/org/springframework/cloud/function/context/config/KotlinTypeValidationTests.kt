@@ -6,38 +6,32 @@ import java.lang.reflect.Type
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.javaField
 
-enum class  FunctionType {
-	Function, SuspendFunction,
-	Consumer, SuspendConsumer,
-	Supplier, SuspendSupplier,
-}
-
 /**
  * ## List of Combinations Tested (in requested order):
- *  1. (T) -> R                     -> functionSingleToSingle
- *  2. (T) -> Flow<R>               -> functionSingleToFlow
- *  3. (Flow<T>) -> R               -> functionFlowToSingle
+ *  1. (T) -> R                     -> functionPlainToPlain
+ *  2. (T) -> Flow<R>               -> functionPlainToFlow
+ *  3. (Flow<T>) -> R               -> functionFlowToPlain
  *  4. (Flow<T>) -> Flow<R>         -> functionFlowToFlow
- *  5. suspend (T) -> R             -> functionSuspendSingleToSingle
- *  6. suspend (T) -> Flow<R>       -> functionSuspendSingleToFlow
- *  7. suspend (Flow<T>) -> R       -> functionSuspendFlowToSingle
+ *  5. suspend (T) -> R             -> functionSuspendPlainToPlain
+ *  6. suspend (T) -> Flow<R>       -> functionSuspendPlainToFlow
+ *  7. suspend (Flow<T>) -> R       -> functionSuspendFlowToPlain
  *  8. suspend (Flow<T>) -> Flow<R> -> functionSuspendFlowToFlow
- *  9. () -> R                      -> supplierSingle
+ *  9. () -> R                      -> supplierPlain
  *  10. () -> Flow<R>               -> supplierFlow
- *  11. suspend () -> R             -> supplierSuspendSingle
+ *  11. suspend () -> R             -> supplierSuspendPlain
  *  12. suspend () -> Flow<R>       -> supplierSuspendFlow
- *  13. (T) -> Unit                 -> consumerSingle
+ *  13. (T) -> Unit                 -> consumerPlain
  *  14. (Flow<T>) -> Unit           -> consumerFlow
- *  15. suspend (T) -> Unit         -> consumerSuspendSingle
+ *  15. suspend (T) -> Unit         -> consumerSuspendPlain
  *  16. suspend (Flow<T>) -> Unit   -> consumerSuspendFlow
  */
 class KotlinTypeValidationTests {
 
-	/* 1. (T) -> R -> functionSingleToSingle */
+	/* 1. (T) -> R -> functionPlainToPlain */
 	@Test
-	fun `test functionSingleToSingle`() {
-		val (propertyName, type) = Sample.Function::singleToSingle.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test functionPlainToPlain`() {
+		val (propertyName, type) = Sample.Function::plainToPlain.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.stringType,
 			Sample.Type.intType
 		)
@@ -48,11 +42,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 2. (T) -> Flow<R> -> functionSingleToFlow */
+	/* 2. (T) -> Flow<R> -> functionPlainToFlow */
 	@Test
-	fun `test functionSingleToFlow`() {
-		val (propertyName, type) = Sample.Function::singleToFlow.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test functionPlainToFlow`() {
+		val (propertyName, type) = Sample.Function::plainToFlow.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.stringType,
 			Sample.Type.flowStringType
 		)
@@ -63,11 +57,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 3. (Flow<T>) -> R -> functionFlowToSingle */
+	/* 3. (Flow<T>) -> R -> functionFlowToPlain */
 	@Test
-	fun `test functionFlowToSingle`() {
-		val (propertyName, type) = Sample.Function::flowToSingle.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test functionFlowToPlain`() {
+		val (propertyName, type) = Sample.Function::flowToPlain.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.flowStringType,
 			Sample.Type.intType
 		)
@@ -82,7 +76,7 @@ class KotlinTypeValidationTests {
 	@Test
 	fun `test functionFlowToFlow`() {
 		val (propertyName, type) = Sample.Function::flowToFlow.propertyType()
-		val paramTypes = arrayOf<Type>(
+		val paramTypes = arrayOf(
 			Sample.Type.flowIntType,
 			Sample.Type.flowStringType
 		)
@@ -93,11 +87,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 5. suspend (T) -> R -> functionSuspendSingleToSingle */
+	/* 5. suspend (T) -> R -> functionSuspendPlainToPlain */
 	@Test
-	fun `test functionSuspendSingleToSingle`() {
-		val (propertyName, type) = Sample.Function::suspendSingleToSingle.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test functionSuspendPlainToPlain`() {
+		val (propertyName, type) = Sample.Function::suspendPlainToPlain.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.stringType,
 			Sample.Type.continuationIntType,
 			Sample.Type.intType
@@ -109,11 +103,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 6. suspend (T) -> Flow<R> -> functionSuspendSingleToFlow */
+	/* 6. suspend (T) -> Flow<R> -> functionSuspendPlainToFlow */
 	@Test
-	fun `test functionSuspendSingleToFlow`() {
-		val (propertyName, type) = Sample.Function::suspendSingleToFlow.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test functionSuspendPlainToFlow`() {
+		val (propertyName, type) = Sample.Function::suspendPlainToFlow.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.stringType,
 			Sample.Type.continuationFlowStringType,
 			Sample.Type.flowStringType
@@ -125,11 +119,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 7. suspend (Flow<T>) -> R -> functionSuspendFlowToSingle */
+	/* 7. suspend (Flow<T>) -> R -> functionSuspendFlowToPlain */
 	@Test
-	fun `test functionSuspendFlowToSingle`() {
-		val (propertyName, type) = Sample.Function::suspendFlowToSingle.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test functionSuspendFlowToPlain`() {
+		val (propertyName, type) = Sample.Function::suspendFlowToPlain.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.flowStringType,
 			Sample.Type.continuationIntType,
 			Sample.Type.intType
@@ -145,7 +139,7 @@ class KotlinTypeValidationTests {
 	@Test
 	fun `test functionSuspendFlowToFlow`() {
 		val (propertyName, type) = Sample.Function::suspendFlowToFlow.propertyType()
-		val paramTypes = arrayOf<Type>(
+		val paramTypes = arrayOf(
 			Sample.Type.flowStringType,
 			Sample.Type.continuationFlowStringType,
 			Sample.Type.flowStringType
@@ -157,10 +151,10 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 9. () -> R -> supplierSingle */
+	/* 9. () -> R -> supplierPlain */
 	@Test
-	fun `test supplierSingle`() {
-		val (propertyName, type) = Sample.Supplier::unitToSingle.propertyType()
+	fun `test supplierPlain`() {
+		val (propertyName, type) = Sample.Supplier::unitToPlain.propertyType()
 
 		val isValid = isValidKotlinSupplier(type)
 
@@ -173,7 +167,7 @@ class KotlinTypeValidationTests {
 	@Test
 	fun `test supplierFlow`() {
 		val (propertyName, type) = Sample.Supplier::unitToFlow.propertyType()
-		val paramTypes = arrayOf<Type>(
+		val paramTypes = arrayOf(
 			Sample.Type.flowStringType
 		)
 		val isValid = isValidKotlinSupplier(type)
@@ -183,11 +177,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 11. suspend () -> R -> supplierSuspendSingle */
+	/* 11. suspend () -> R -> supplierSuspendPlain */
 	@Test
-	fun `test supplierSuspendSingle`() {
-		val (propertyName, type) = Sample.Supplier::suspendUnitToSingle.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test supplierSuspendPlain`() {
+		val (propertyName, type) = Sample.Supplier::suspendUnitToPlain.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.continuationStringType,
 			Sample.Type.stringType
 		)
@@ -202,7 +196,7 @@ class KotlinTypeValidationTests {
 	@Test
 	fun `test supplierSuspendFlow`() {
 		val (propertyName, type) = Sample.Supplier::suspendUnitToFlow.propertyType()
-		val paramTypes = arrayOf<Type>(
+		val paramTypes = arrayOf(
 			Sample.Type.continuationFlowStringType,
 			Sample.Type.flowStringType
 		)
@@ -213,11 +207,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 13. (T) -> Unit -> consumerSingle */
+	/* 13. (T) -> Unit -> consumerPlain */
 	@Test
-	fun `test consumerSingle`() {
-		val (propertyName, type) = Sample.Consumer::singleToUnit.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test consumerPlain`() {
+		val (propertyName, type) = Sample.Consumer::plainToUnit.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.stringType,
 			Sample.Type.unitType
 		)
@@ -232,7 +226,7 @@ class KotlinTypeValidationTests {
 	@Test
 	fun `test consumerFlow`() {
 		val (propertyName, type) = Sample.Consumer::flowToUnit.propertyType()
-		val paramTypes = arrayOf<Type>(
+		val paramTypes = arrayOf(
 			Sample.Type.flowStringType,
 			Sample.Type.unitType
 		)
@@ -243,11 +237,11 @@ class KotlinTypeValidationTests {
 			.isTrue()
 	}
 
-	/* 15. suspend (T) -> Unit -> consumerSuspendSingle */
+	/* 15. suspend (T) -> Unit -> consumerSuspendPlain */
 	@Test
-	fun `test consumerSuspendSingle`() {
-		val (propertyName, type) = Sample.Consumer::suspendSingleToUnit.propertyType()
-		val paramTypes = arrayOf<Type>(
+	fun `test consumerSuspendPlain`() {
+		val (propertyName, type) = Sample.Consumer::suspendPlainToUnit.propertyType()
+		val paramTypes = arrayOf(
 			Sample.Type.stringType,
 			Sample.Type.continuationUnitType,
 			Sample.Type.unitType
@@ -263,7 +257,7 @@ class KotlinTypeValidationTests {
 	@Test
 	fun `test consumerSuspendFlow`() {
 		val (propertyName, type) = Sample.Consumer::suspendFlowToUnit.propertyType()
-		val paramTypes = arrayOf<Type>(
+		val paramTypes = arrayOf(
 			Sample.Type.flowStringType,
 			Sample.Type.continuationUnitType,
 			Sample.Type.unitType

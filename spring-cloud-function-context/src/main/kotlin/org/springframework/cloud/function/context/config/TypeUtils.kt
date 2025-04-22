@@ -79,13 +79,17 @@ fun isContinuationFlowType(type: Type): Boolean {
 }
 
 
-private fun getContinuationTypeArguments(type: Type): Type {
+internal fun getContinuationTypeArguments(type: Type): Type {
 	if(!isContinuationType(type)) {
 		return type
 	}
 	val parameterizedType = type as ParameterizedType
-	val wildcardType = parameterizedType.actualTypeArguments[0] as WildcardType
-	return wildcardType.lowerBounds[0]
+	val typeArg = parameterizedType.actualTypeArguments[0]
+	return when (typeArg) {
+		is WildcardType -> typeArg.lowerBounds[0]
+		is ParameterizedType -> typeArg
+		else -> typeArg
+	}
 }
 
 

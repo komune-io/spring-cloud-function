@@ -52,6 +52,7 @@ private fun Any?.asFlux(): Flux<Any> {
 		is Flow<*> -> (this as Flow<Any>).asFlux()
 		is Flux<*> -> this as Flux<Any>
 		is Mono<*> -> this.flatMapMany { Flux.just(it) }
+		null -> Flux.empty()
 		else -> Flux.just(this)
 	}
 }
@@ -80,9 +81,12 @@ fun invokeSuspendingSupplier(kotlinLambdaTarget: Any): Flux<Any> {
 
 fun invokeSuspendingConsumer(kotlinLambdaTarget: Any, arg0: Any) {
 	val consumer = kotlinLambdaTarget as SuspendConsumer
-	val flux = arg0 as Flux<Any>
 	executeInCoroutineAndConvertToFlux { continuation ->
-		consumer.invoke(flux.asFlow(), continuation)
+		// FIXME: This is a fix for KotlinConsumerSuspendWrapperTest  fun `test accept method processes input correctly`() {
+		when (arg0) {
+			is Flux<*> -> consumer.invoke((arg0 as Flux<Any>).asFlow(), continuation)
+			else -> consumer.invoke(arg0, continuation)
+		}
 	}.subscribe()
 }
 

@@ -10,21 +10,21 @@ import kotlinx.coroutines.runBlocking
 object Sample {
 	object Function {
 		/**
-		 * 1. (T) -> R -> functionSingleToSingle
+		 * 1. (T) -> R -> functionPlainToPlain
 		 */
-		val singleToSingle: (String) -> Int = { it.length }
+		val plainToPlain: (String) -> Int = { it.length }
 
 		/**
-		 * 2. (T) -> Flow<R> -> functionSingleToFlow
+		 * 2. (T) -> Flow<R> -> functionPlainToFlow
 		 */
-		val singleToFlow: (String) -> Flow<String> = { input ->
+		val plainToFlow: (String) -> Flow<String> = { input ->
 			flow { input.forEach { emit(it.toString()) } }
 		}
 
 		/**
-		 * 3. (Flow<T>) -> R -> functionFlowToSingle
+		 * 3. (Flow<T>) -> R -> functionFlowToPlain
 		 */
-		val flowToSingle: (Flow<String>) -> Int = { flowInput ->
+		val flowToPlain: (Flow<String>) -> Int = { flowInput ->
 			var count = 0
 			runBlocking { flowInput.collect { count++ } }
 			count
@@ -38,23 +38,23 @@ object Sample {
 		}
 
 		/**
-		 * 5. suspend (T) -> R -> functionSuspendSingleToSingle
+		 * 5. suspend (T) -> R -> functionSuspendPlainToPlain
 		 */
-		val suspendSingleToSingle: suspend (String) -> Int = { input ->
+		val suspendPlainToPlain: suspend (String) -> Int = { input ->
 			input.length
 		}
 
 		/**
-		 * 6. suspend (T) -> Flow<R> -> functionSuspendSingleToFlow
+		 * 6. suspend (T) -> Flow<R> -> functionSuspendPlainToFlow
 		 */
-		val suspendSingleToFlow: suspend (String) -> Flow<String> = { input ->
+		val suspendPlainToFlow: suspend (String) -> Flow<String> = { input ->
 			flow { input.forEach { emit(it.toString()) } }
 		}
 
 		/**
-		 * 7. suspend (Flow<T>) -> R -> functionSuspendFlowToSingle
+		 * 7. suspend (Flow<T>) -> R -> functionSuspendFlowToPlain
 		 */
-		val suspendFlowToSingle: suspend (Flow<String>) -> Int = { flowInput ->
+		val suspendFlowToPlain: suspend (Flow<String>) -> Int = { flowInput ->
 			var count = 0
 			flowInput.collect { count++ }
 			count
@@ -72,9 +72,9 @@ object Sample {
 
 	object Supplier {
 		/**
-		 * 9. () -> R -> supplierSingle
+		 * 9. () -> R -> supplierPlain
 		 */
-		val unitToSingle: () -> Int = { 42 }
+		val unitToPlain: () -> Int = { 42 }
 
 		/**
 		 * 10. () -> Flow<R> -> supplierFlow
@@ -87,9 +87,9 @@ object Sample {
 		}
 
 		/**
-		 * 11. suspend () -> R -> supplierSuspendSingle
+		 * 11. suspend () -> R -> supplierSuspendPlain
 		 */
-		val suspendUnitToSingle: suspend () -> String = {
+		val suspendUnitToPlain: suspend () -> String = {
 			"Hello from suspend"
 		}
 
@@ -106,10 +106,10 @@ object Sample {
 
 	object Consumer {
 		/**
-		 *  13. (T) -> Unit -> consumerSingle
+		 *  13. (T) -> Unit -> consumerPlain
 		 */
-		val singleToUnit: (String) -> Unit = {
-			println("Consumed single: $it")
+		val plainToUnit: (String) -> Unit = {
+			println("Consumed plain: $it")
 		}
 
 		/**
@@ -124,7 +124,7 @@ object Sample {
 		/**
 		 * 15. suspend (T) -> Unit -> suspendConsumer
 		 */
-		val suspendSingleToUnit: suspend (String) -> Unit = { input ->
+		val suspendPlainToUnit: suspend (String) -> Unit = { input ->
 			println("Suspend consumed: $input")
 		}
 
