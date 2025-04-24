@@ -2,199 +2,142 @@ package com.example;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * ## List of Combinations Tested:
  *
- * 1. **Function<T, R>** - Single input, single output (sync)
- * 2. **Function<T, Mono<T>>** - Single (non-reactive) input, single reactive output
- * 3. **Function<Mono<T>, Mono<R>>** - Mono input, Mono output
- * 4. **Function<Mono<T>, Flux<R>>** - Single reactive input, multiple reactive outputs
- * 5. **Function<Flux<T>, Mono<R>>** - Reactive stream aggregated to a single result
- * 6. **Function<Flux<T>, Flux<R>>** - Reactive stream-to-stream transformation
- * 7. **Function<T, Flux<R>>** - Single input, multiple reactive outputs (streamed)
- * 8. **Supplier<T>** - No input, single value output (sync)
- * 9. **Supplier<Mono<T>>** - No input, single reactive output (Mono)
- * 10. **Supplier<Flux<T>>** - No input, reactive stream of values
- * 11. **Consumer<T>** - Single input, no output (side-effect)
- * 12. **Consumer<Mono<T>>** - Single reactive input (Mono), no output (side-effect)
- * 13. **Consumer<Flux<T>>** - Reactive stream as input, no output
+ * 1. **Function<T, R>** - Plain input, single output (sync) -> functionPlainToPlain
+ * 2. **Function<T, Mono<T>>** - Plain input, single reactive output -> functionPlainToMono
+ * 3. **Function<Mono<T>, Mono<R>>** - Mono input, Mono output -> functionMonoToMono
+ * 4. **Function<Mono<T>, Flux<R>>** - Mono input, multiple reactive outputs -> functionMonoToFlux
+ * 5. **Function<Flux<T>, Mono<R>>** - Reactive stream aggregated to a single result -> functionFluxToMono
+ * 6. **Function<Flux<T>, Flux<R>>** - Reactive stream-to-stream transformation -> functionFluxToFlux
+ * 7. **Function<T, Flux<R>>** - Plain input, multiple reactive outputs (streamed) -> functionPlainToFlux
+ * 8. **Function<Message<String>, Message<Integer>>** - Message input/output -> functionMessageToMessage
+ * 9. **Function<Flux<Message<String>>, Flux<Message<Integer>>>** - Flux Message input/output -> functionFluxMessageToFluxMessage
+ * 10. **Function<Mono<T>, Mono<R>>** - Mono input, Mono output -> functionMonoToPlain // Modified to be non-blocking
+ * 11. **Function<Flux<T>, Mono<R>>** - Flux input, Mono output -> functionFluxToPlain // Modified to be non-blocking
  */
 @Configuration
 public class FunctionExamples {
 
-	// --- 1. Function<T, R> ---
-	/**
-	 * Function that takes a String and returns its length as an Integer.
-	 *
-	 * **Example:**
-	 * Input: "Hello"
-	 * Output: 5
-	 */
+	/** 1. Function<T, R> */
 	@Bean
-	public Function<String, Integer> functionSingleToSingle() {
-		return str -> str.length();  // Single input -> single output
+	public Function<String, Integer> functionPlainToPlain() {
+		return String::length; // Use method reference
 	}
 
-	// --- 2. Function<T, Mono<T>> ---
-	/**
-	 * Function that takes a single (non-reactive) String and returns a Mono<String>.
-	 *
-	 * **Example:**
-	 * Input: "hello"
-	 * Output: "HELLO" (wrapped in Mono)
-	 */
+	/** 2. Function<T, Mono<T>> */
 	@Bean
-	public Function<String, Mono<String>> functionSingleToMono() {
+	public Function<String, Mono<String>> functionPlainToMono() {
 		return str -> Mono.just(str.toUpperCase());
 	}
 
-	// --- 3. Function<Mono<T>, Mono<R>> ---
-	/**
-	 * Function that takes a Mono<String> and returns a Mono<String> (uppercase transformation).
-	 *
-	 * **Example:**
-	 * Input: "hello"
-	 * Output: "HELLO"
-	 */
+	/** 3. Function<Mono<T>, Mono<R>> */
 	@Bean
 	public Function<Mono<String>, Mono<String>> functionMonoToMono() {
 		return mono -> mono.map(String::toUpperCase);
 	}
 
-	// --- 4. Function<Mono<T>, Flux<R>> ---
-	/**
-	 * Function that takes a single reactive input (Mono<String>) and
-	 * returns a Flux<String> of individual characters.
-	 *
-	 * **Example:**
-	 * Input: "test"
-	 * Output: ["t", "e", "s", "t"]
-	 */
+	/** 4. Function<Mono<T>, Flux<R>> */
 	@Bean
 	public Function<Mono<String>, Flux<String>> functionMonoToFlux() {
 		return mono -> mono.flatMapMany(str -> Flux.fromArray(str.split("")));
 	}
 
-	// --- 5. Function<Flux<T>, Mono<R>> ---
-	/**
-	 * Function that takes a Flux<String> and returns the number of elements as a Mono<Integer>.
-	 *
-	 * **Example:**
-	 * Input: ["one", "two", "three"]
-	 * Output: 3
-	 */
+	/** 5. Function<Flux<T>, Mono<R>> */
 	@Bean
 	public Function<Flux<String>, Mono<Integer>> functionFluxToMono() {
-		return flux -> flux.collectList().map(List::size);
+		// Use count() which returns Mono<Long>
+		return flux -> flux.count().map(Long::intValue);
 	}
 
-	// --- 6. Function<Flux<T>, Flux<R>> ---
-	/**
-	 * Function that takes a Flux<Integer> and returns a Flux<String>.
-	 *
-	 * **Example:**
-	 * Input: [1, 2, 3]
-	 * Output: ["1", "2", "3"]
-	 */
+	/** 6. Function<Flux<T>, Flux<R>> */
 	@Bean
 	public Function<Flux<Integer>, Flux<String>> functionFluxToFlux() {
 		return flux -> flux.map(Object::toString);
 	}
 
-	// --- 7. Function<T, Flux<R>> ---
-	/**
-	 * Function that takes a String and returns a Flux<String> (stream of characters).
-	 *
-	 * **Example:**
-	 * Input: "test"
-	 * Output: ["t", "e", "s", "t"]
-	 */
+	/** 7. Function<T, Flux<R>> */
 	@Bean
-	public Function<String, Flux<String>> functionSingleToFlux() {
+	public Function<String, Flux<String>> functionPlainToFlux() {
 		return str -> Flux.fromArray(str.split(""));
 	}
 
-	// --- 8. Supplier<T> ---
-	/**
-	 * Supplier that returns a single String value.
-	 *
-	 * **Example:**
-	 * Output: "Hello, World!"
-	 */
+	/** 8. Function<Message<String>, Message<Integer>> */
 	@Bean
-	public Supplier<String> supplierSingle() {
-		return () -> "Hello, World!";
+	public Function<Message<String>, Message<Integer>> functionMessageToMessage() {
+		return message -> MessageBuilder
+			.withPayload(message.getPayload().length())
+			.copyHeaders(message.getHeaders())
+			.setHeader("javaProcessed", "true")
+			.build();
 	}
 
-	// --- 9. Supplier<Mono<T>> ---
-	/**
-	 * Supplier that returns a single reactive Mono<String>.
-	 *
-	 * **Example:**
-	 * Output: "Hello from Mono!"
-	 */
+	/** 9. Function<Flux<Message<String>>, Flux<Message<Integer>>> */
 	@Bean
-	public Supplier<Mono<String>> supplierMono() {
-		return () -> Mono.just("Hello from Mono!");
+	public Function<Flux<Message<String>>, Flux<Message<Integer>>> functionFluxMessageToFluxMessage() {
+		return flux -> flux.map(message -> MessageBuilder
+			.withPayload(message.getPayload().hashCode())
+			.copyHeaders(message.getHeaders())
+			.setHeader("javaFluxProcessed", true)
+			.build()
+		);
 	}
 
-	// --- 10. Supplier<Flux<T>> ---
-	/**
-	 * Supplier that returns a reactive stream (Flux<String>) of values.
+ /**
+	 * 10. Function<Mono<T>, Integer> // Modified to use a different approach
+	 * Takes a Mono<String>, processes the value reactively, returns its length as Integer.
+	 * This implementation uses a variable that's updated when the mono emits a value.
 	 *
 	 * **Example:**
-	 * Output: ["one", "two", "three"]
+	 * Input: "BlockMono"
+	 * Output: 9
 	 */
 	@Bean
-	public Supplier<Flux<String>> supplierFlux() {
-		return () -> Flux.just("one", "two", "three");
+	public Function<Mono<String>, Integer> functionMonoToPlain() {
+		return mono -> {
+			// Create a result variable
+			int[] result = new int[1];
+
+			// Subscribe to the mono and update the result when a value is emitted
+			mono.doOnNext(value -> result[0] = (value != null) ? value.length() : 0)
+				.doOnSuccess(value -> System.out.println("Processed string with length: " + result[0]))
+				.subscribe();
+
+			// Return the result value
+			return result[0];
+		};
 	}
 
-	// --- 11. Consumer<T> ---
-	/**
-	 * Consumer that takes a single String and performs a side-effect (logs to console).
-	 *
-	 * **Example:**
-	 * Input: "Some logging data"
-	 * Output: (Logs "Received single: Some logging data")
-	 */
-	@Bean
-	public Consumer<String> consumerSingle() {
-		return str -> System.out.println("Received single: " + str);
-	}
+ /**
+  * 11. Function<Flux<T>, Integer> // Modified to use a different approach
+  * Takes a Flux<String>, counts all values reactively, returns the count as Integer.
+  * This implementation uses a counter variable that's updated as elements are emitted by the flux.
+  *
+  * **Example:**
+  * Input: ["Block", "Flux"]
+  * Output: 2
+  */
+ @Bean
+ public Function<Flux<String>, Integer> functionFluxToPlain() {
+ 	return flux -> {
+ 		// Create a counter variable
+ 		int[] counter = new int[1];
 
-	// --- 12. Consumer<Mono<T>> ---
-	/**
-	 * Consumer that takes a Mono<String> and performs a side-effect (logs to console).
-	 *
-	 * **Example:**
-	 * Input: "Reactive Input"
-	 * Output: (Logs "Received Mono: Reactive Input")
-	 */
-	@Bean
-	public Consumer<Mono<String>> consumerMono() {
-		return mono -> mono.subscribe(value -> System.out.println("Received Mono: " + value));
-	}
+ 		// Subscribe to the flux and increment the counter for each element
+ 		flux.doOnNext(s -> counter[0]++)
+ 			.doOnComplete(() -> System.out.println("Counted " + counter[0] + " elements"))
+ 			.subscribe();
 
-	// --- 13. Consumer<Flux<T>> ---
-	/**
-	 * Consumer that takes a Flux<String> and performs a side-effect (logs each item).
-	 *
-	 * **Example:**
-	 * Input: ["streamed item 1", "streamed item 2"]
-	 * Output: (Logs "Received stream item: streamed item 1", "Received stream item: streamed item 2")
-	 */
-	@Bean
-	public Consumer<Flux<String>> consumerFlux() {
-		return flux -> flux.subscribe(str -> System.out.println("Received stream item: " + str));
-	}
-
+ 		// Return the counter value
+ 		return counter[0];
+ 	};
+ }
 }
