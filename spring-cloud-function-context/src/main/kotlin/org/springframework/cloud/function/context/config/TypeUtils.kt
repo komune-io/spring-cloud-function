@@ -84,8 +84,7 @@ internal fun getContinuationTypeArguments(type: Type): Type {
 		return type
 	}
 	val parameterizedType = type as ParameterizedType
-	val typeArg = parameterizedType.actualTypeArguments[0]
-	return when (typeArg) {
+	return when (val typeArg = parameterizedType.actualTypeArguments[0]) {
 		is WildcardType -> typeArg.lowerBounds[0]
 		is ParameterizedType -> typeArg
 		else -> typeArg
@@ -97,6 +96,6 @@ fun asFlow(arg0: Flux<*>): Flow<Any> {
 	return arg0.asFlow()
 }
 
-fun asFlux(arg0: Flow<Any>): Flux<Any> {
+fun convertToFlux(arg0: Flow<Any>): Flux<Any> {
 	return arg0.asFlux()
 }

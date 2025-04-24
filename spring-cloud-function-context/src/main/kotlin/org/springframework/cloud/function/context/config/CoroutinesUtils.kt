@@ -31,13 +31,13 @@ import reactor.core.publisher.Mono
  * @author Adrien Poupard
  *
  */
-private inline fun <T, R> executeInCoroutineAndConvertToFlux(crossinline block: (Continuation<T>) -> R): Flux<Any> {
+private inline fun <O> executeInCoroutineAndConvertToFlux(crossinline block: (Continuation<O>) -> O): Flux<O> {
 	return mono(Dispatchers.Unconfined) {
 		suspendCoroutineUninterceptedOrReturn { continuation ->
 			block(continuation)
 		}
 	}.flatMapMany {
-		it.asFlux()
+		it.convertToFlux()
 	}
 }
 
@@ -47,51 +47,58 @@ private inline fun <T, R> executeInCoroutineAndConvertToFlux(crossinline block: 
  * @param value The value to convert
  * @return The value as a Flux
  */
-private fun Any?.asFlux(): Flux<Any> {
+private fun <T> T?.convertToFlux(): Flux<T> {
 	return when (this) {
-		is Flow<*> -> (this as Flow<Any>).asFlux()
-		is Flux<*> -> this as Flux<Any>
-		is Mono<*> -> this.flatMapMany { Flux.just(it) }
+		is Flow<*> -> @Suppress("UNCHECKED_CAST") ((this as Flow<Any>).asFlux() as Flux<T>)
+		is Flux<*> -> @Suppress("UNCHECKED_CAST") (this as Flux<T>)
+		is Mono<*> -> @Suppress("UNCHECKED_CAST") (this.flatMapMany { Flux.just(it) } as Flux<T>)
 		null -> Flux.empty()
 		else -> Flux.just(this)
 	}
 }
 
-fun invokeSuspendingFlowFunction(kotlinLambdaTarget: Any, arg0: Flow<Any>): Flux<Any> {
-	val function = kotlinLambdaTarget as SuspendFunction
+fun <I, O> invokeSuspendingFlowFunction(kotlinLambdaTarget: Any, arg0: Flow<I>): Flux<O> {
+	@Suppress("UNCHECKED_CAST")
+	val function = kotlinLambdaTarget as SuspendFunction<Flow<I>, O>
 	return executeInCoroutineAndConvertToFlux { continuation ->
 		function.invoke(arg0, continuation)
 	}
 }
 
-fun invokeSuspendingSingleFunction(kotlinLambdaTarget: Any, arg0: Any): Flux<Any> {
-	val function = kotlinLambdaTarget as SuspendFunction
+fun <I, O> invokeSuspendingSingleFunction(kotlinLambdaTarget: Any, arg0: I): Flux<O> {
+	@Suppress("UNCHECKED_CAST")
+	val function = kotlinLambdaTarget as SuspendFunction<I, O>
 	return executeInCoroutineAndConvertToFlux { continuation ->
 		function.invoke(arg0, continuation)
 	}
 }
 
-
-fun invokeSuspendingSupplier(kotlinLambdaTarget: Any): Flux<Any> {
-	val supplier = kotlinLambdaTarget as SuspendSupplier
-	return executeInCoroutineAndConvertToFlux {  continuation ->
+fun <O> invokeSuspendingSupplier(kotlinLambdaTarget: Any): Flux<O> {
+	@Suppress("UNCHECKED_CAST")
+	val supplier = kotlinLambdaTarget as SuspendSupplier<O>
+	return executeInCoroutineAndConvertToFlux { continuation ->
 		supplier.invoke(continuation)
 	}
 }
 
-fun invokeSuspendingConsumer(kotlinLambdaTarget: Any, arg0: Any) {
-	val consumer = kotlinLambdaTarget as SuspendConsumer
+fun <I> invokeSuspendingConsumer(kotlinLambdaTarget: Any, arg0: I) {
+	@Suppress("UNCHECKED_CAST")
+	val consumer = kotlinLambdaTarget as SuspendConsumer<I>
 	executeInCoroutineAndConvertToFlux { continuation ->
 		// FIXME: This is a fix for KotlinConsumerSuspendWrapperTest  fun `test accept method processes input correctly`() {
 		when (arg0) {
-			is Flux<*> -> consumer.invoke((arg0 as Flux<Any>).asFlow(), continuation)
+			is Flux<*> -> {
+				val flow = (arg0 as Flux<*>).asFlow()
+				@Suppress("UNCHECKED_CAST")
+				consumer.invoke(flow as I, continuation)
+			}
 			else -> consumer.invoke(arg0, continuation)
 		}
 	}.subscribe()
 }
 
-private typealias SuspendFunction = (Any?, Continuation<Any>) -> Any?
+private typealias SuspendFunction<I, O> = (I?, Continuation<O>) -> O
 
-private typealias SuspendConsumer = (Any?, Continuation<Unit>) -> Unit?
+private typealias SuspendConsumer<I> = (I?, Continuation<Unit>) -> Unit?
 
-private typealias SuspendSupplier = (Continuation<Any>) -> Any?
+private typealias SuspendSupplier<O> = (Continuation<O>) -> O

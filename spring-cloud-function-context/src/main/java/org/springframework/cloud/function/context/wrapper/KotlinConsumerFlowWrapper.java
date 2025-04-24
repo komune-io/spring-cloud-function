@@ -56,12 +56,6 @@ public final class KotlinConsumerFlowWrapper implements KotlinFunctionWrapper, C
 	private final String name;
 	private final ResolvableType type;
 
-	public KotlinConsumerFlowWrapper(Function1<Flow<Object>, Unit> kotlinLambdaTarget, String functionName) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.type = null;
-	}
-
 	public KotlinConsumerFlowWrapper(Function1<Flow<Object>, Unit> kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
 		this.type = type;

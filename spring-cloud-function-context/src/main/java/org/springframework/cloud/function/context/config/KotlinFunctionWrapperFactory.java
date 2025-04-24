@@ -23,7 +23,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.wrapper.KotlinConsumerFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinConsumerPlainWrapper;
-import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendWrapper;
+import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendFlowWrapper;
+import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionFlowToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionFlowToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionObjectToObjectWrapper;
@@ -88,8 +89,11 @@ public final class KotlinFunctionWrapperFactory {
 		else if (KotlinConsumerPlainWrapper.isValid(functionType, types)) {
 			wrapper = KotlinConsumerPlainWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
 		}
-		else if (KotlinConsumerSuspendWrapper.isValid(functionType, types)) {
-			wrapper = KotlinConsumerSuspendWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
+		else if (KotlinConsumerSuspendFlowWrapper.isValid(functionType, types)) {
+			wrapper = KotlinConsumerSuspendFlowWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
+		}
+		else if (KotlinConsumerSuspendPlainWrapper.isValid(functionType, types)) {
+			wrapper = KotlinConsumerSuspendPlainWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
 		}
 		else if (KotlinFunctionObjectToObjectWrapper.isValid(functionType, types)) {
 			wrapper = KotlinFunctionObjectToObjectWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, functionType, types);

@@ -78,7 +78,7 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 		if (kotlinLambdaTarget instanceof Function1) {
 			Function1<Flow<Object>, Flow<Object>> target = (Function1<Flow<Object>, Flow<Object>>) kotlinLambdaTarget;
 			Flow<Object> result = target.invoke(flow);
-			return TypeUtils.asFlux(result);
+			return TypeUtils.convertToFlux(result);
 		}
 		return null;
 	}

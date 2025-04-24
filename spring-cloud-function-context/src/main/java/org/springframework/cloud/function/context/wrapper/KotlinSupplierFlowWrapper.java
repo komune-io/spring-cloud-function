@@ -28,7 +28,7 @@ import org.springframework.cloud.function.context.config.FunctionUtils;
 import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
-import static org.springframework.cloud.function.context.config.TypeUtils.asFlux;
+import static org.springframework.cloud.function.context.config.TypeUtils.convertToFlux;
 
 /**
  * @author Adrien Poupard
@@ -79,7 +79,7 @@ public final class KotlinSupplierFlowWrapper implements KotlinFunctionWrapper, S
 	@Override
 	public Flux<Object> get() {
 		Flow<Object> result = invoke();
-		return asFlux(result);
+		return convertToFlux(result);
 	}
 
 	@Override
