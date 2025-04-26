@@ -72,12 +72,24 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 		this.type = type;
 	}
 
+
+	@Override
+	public Flux<Object> apply(Flux<Object> input) {
+		return this.invoke(input);
+	}
+
+
 	@Override
 	public Flux<Object> invoke(Flux<Object> arg0) {
 		Flow<Object> flow = TypeUtils.asFlow(arg0);
 		if (kotlinLambdaTarget instanceof Function1) {
 			Function1<Flow<Object>, Flow<Object>> target = (Function1<Flow<Object>, Flow<Object>>) kotlinLambdaTarget;
 			Flow<Object> result = target.invoke(flow);
+			return TypeUtils.convertToFlux(result);
+		}
+		if (kotlinLambdaTarget instanceof Function<?, ?>) {
+			Function<Flow<Object>, Flow<Object>> target = (Function<Flow<Object>, Flow<Object>>) kotlinLambdaTarget;
+			Flow<Object> result = target.apply(flow);
 			return TypeUtils.convertToFlux(result);
 		}
 		return null;
@@ -92,10 +104,4 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 	public String getName() {
 		return this.name;
 	}
-
-	@Override
-	public Flux<Object> apply(Flux<Object> input) {
-		return this.invoke(input);
-	}
-
 }

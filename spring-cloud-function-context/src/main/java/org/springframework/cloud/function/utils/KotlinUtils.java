@@ -16,9 +16,15 @@
 
 package org.springframework.cloud.function.utils;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.cloud.function.context.config.FunctionContextUtils;
+import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.KotlinDetector;
 
 /**
@@ -29,10 +35,20 @@ public final class KotlinUtils {
 
 	}
 
-	public static boolean isKotlinType(Object object) {
+	public static boolean isKotlinType(Object object, String name, ConfigurableListableBeanFactory beanFactory) {
 		if (KotlinDetector.isKotlinPresent()) {
-			return KotlinDetector.isKotlinType(object.getClass()) || object instanceof Function0<?>
+			Type functionType = FunctionContextUtils.findType(name, beanFactory);
+
+			boolean isKotlinObject = KotlinDetector.isKotlinType(object.getClass())
+					|| object instanceof Function0<?>
 					|| object instanceof Function1<?, ?>;
+
+			if (functionType instanceof ParameterizedType) {
+				Type[] types = ((ParameterizedType) functionType).getActualTypeArguments();
+				return isKotlinObject || TypeUtils.hasFlowType(types);
+			}
+
+			return isKotlinObject;
 		}
 		return false;
 	}

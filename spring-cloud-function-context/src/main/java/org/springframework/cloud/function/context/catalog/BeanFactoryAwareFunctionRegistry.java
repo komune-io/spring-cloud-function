@@ -120,7 +120,7 @@ public class BeanFactoryAwareFunctionRegistry extends SimpleFunctionRegistry imp
 		functionDefinition = StringUtils.hasText(functionDefinition)
 				? functionDefinition
 						: this.applicationContext.getEnvironment().getProperty(FunctionProperties.FUNCTION_DEFINITION, "");
-		if (!this.applicationContext.containsBean(functionDefinition) || !KotlinUtils.isKotlinType(this.applicationContext.getBean(functionDefinition))) {
+		if (!this.applicationContext.containsBean(functionDefinition) || !KotlinUtils.isKotlinType(this.applicationContext.getBean(functionDefinition), functionDefinition, this.applicationContext.getBeanFactory())) {
 			functionDefinition = this.normalizeFunctionDefinition(functionDefinition);
 		}
 		if (!isFunctionDefinitionEligible(functionDefinition)) {
@@ -160,7 +160,7 @@ public class BeanFactoryAwareFunctionRegistry extends SimpleFunctionRegistry imp
 							else if (functionCandidate instanceof BiFunction || functionCandidate instanceof BiConsumer) {
 								functionRegistration = this.registerMessagingBiFunction(functionCandidate, functionName);
 							}
-							else if (KotlinUtils.isKotlinType(functionCandidate)) {
+							else if (KotlinUtils.isKotlinType(functionCandidate, functionName, this.applicationContext.getBeanFactory())) {
 								KotlinFunctionWrapperFactory wrapper = new KotlinFunctionWrapperFactory(functionCandidate, this.applicationContext.getBeanFactory());
 								functionRegistration = wrapper.getFunctionRegistration(functionName);
 							}

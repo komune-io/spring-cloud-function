@@ -76,8 +76,15 @@ public final class KotlinFunctionFlowToPlainWrapper implements KotlinFunctionWra
 	@Override
 	public Object invoke(Flux<Object> arg0) {
 		Flow<Object> flow = TypeUtils.asFlow(arg0);
-		Function1<Flow<Object>, Object> target = (Function1<Flow<Object>, Object>) kotlinLambdaTarget;
-		return target.invoke(flow);
+		if (kotlinLambdaTarget instanceof Function<?, ?>) {
+			Function<Flow<Object>, Object> target = (Function<Flow<Object>, Object>) kotlinLambdaTarget;
+			return target.apply(flow);
+		}
+		else {
+			Function1<Flow<Object>, Object> target = (Function1<Flow<Object>, Object>) kotlinLambdaTarget;
+			return target.invoke(flow);
+		}
+
 	}
 
 	@Override

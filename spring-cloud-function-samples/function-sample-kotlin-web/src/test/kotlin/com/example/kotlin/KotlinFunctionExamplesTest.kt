@@ -18,6 +18,8 @@ package com.example.kotlin
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.cloud.function.context.test.FunctionalSpringBootTest
@@ -29,32 +31,32 @@ import java.time.Duration
 import java.util.UUID
 
 /**
- * Test class for verifying the Kotlin Function examples in [KotlinFunctionExamples].
+ * Test class for verifying the Kotlin Function examples in [KotlinFunctionExamples], [KotlinFunctionJavaExamples], and [KotlinFunctionKotlinExamples].
  * Each bean is exposed at "/{beanName}" by Spring Cloud Function.
  *
  * ## Functions Tested:
  * --- Coroutine ---
- * 1. (T) -> R                     -> functionPlainToPlain
- * 2. (T) -> Flow<R>               -> functionPlainToFlow
- * 3. (Flow<T>) -> R               -> functionFlowToPlain
- * 4. (Flow<T>) -> Flow<R>         -> functionFlowToFlow
- * 5. suspend (T) -> R             -> functionSuspendPlainToPlain
- * 6. suspend (T) -> Flow<R>       -> functionSuspendPlainToFlow
- * 7. suspend (Flow<T>) -> R       -> functionSuspendFlowToPlain
- * 8. suspend (Flow<T>) -> Flow<R> -> functionSuspendFlowToFlow
+ * 1. (T) -> R                     -> functionPlainToPlain, functionJavaPlainToPlain, functionKotlinPlainToPlain
+ * 2. (T) -> Flow<R>               -> functionPlainToFlow, functionJavaPlainToFlow, functionKotlinPlainToFlow
+ * 3. (Flow<T>) -> R               -> functionFlowToPlain, functionJavaFlowToPlain, functionKotlinFlowToPlain
+ * 4. (Flow<T>) -> Flow<R>         -> functionFlowToFlow, functionJavaFlowToFlow, functionKotlinFlowToFlow
+ * 5. suspend (T) -> R             -> functionSuspendPlainToPlain, functionJavaSuspendPlainToPlain, functionKotlinSuspendPlainToPlain
+ * 6. suspend (T) -> Flow<R>       -> functionSuspendPlainToFlow, functionJavaSuspendPlainToFlow, functionKotlinSuspendPlainToFlow
+ * 7. suspend (Flow<T>) -> R       -> functionSuspendFlowToPlain, functionJavaSuspendFlowToPlain, functionKotlinSuspendFlowToPlain
+ * 8. suspend (Flow<T>) -> Flow<R> -> functionSuspendFlowToFlow, functionJavaSuspendFlowToFlow, functionKotlinSuspendFlowToFlow
  * --- Reactor ---
- * 9. (T) -> Mono<R>               -> functionPlainToMono
- * 10. (T) -> Flux<R>              -> functionPlainToFlux
- * 11. (Mono<T>) -> Mono<R>        -> functionMonoToMono
- * 12. (Flux<T>) -> Flux<R>        -> functionFluxToFlux
- * 13. (Flux<T>) -> Mono<R>        -> functionFluxToMono
+ * 9. (T) -> Mono<R>               -> functionPlainToMono, functionJavaPlainToMono, functionKotlinPlainToMono
+ * 10. (T) -> Flux<R>              -> functionPlainToFlux, functionJavaPlainToFlux, functionKotlinPlainToFlux
+ * 11. (Mono<T>) -> Mono<R>        -> functionMonoToMono, functionJavaMonoToMono, functionKotlinMonoToMono
+ * 12. (Flux<T>) -> Flux<R>        -> functionFluxToFlux, functionJavaFluxToFlux, functionKotlinFluxToFlux
+ * 13. (Flux<T>) -> Mono<R>        -> functionFluxToMono, functionJavaFluxToMono, functionKotlinFluxToMono
  * --- Message<T> ---
- * 14. (Message<T>) -> Message<R>  -> functionMessageToMessage
- * 15. suspend (Message<T>) -> Message<R> -> functionSuspendMessageToMessage
- * 16. (Mono<Message<T>>) -> Mono<Message<R>> -> functionMonoMessageToMonoMessage
- * 17. (Flux<Message<T>>) -> Flux<Message<R>> -> functionFluxMessageToFluxMessage
- * 18. (Flow<Message<T>>) -> Flow<Message<R>> -> functionFlowMessageToFlowMessage
- * 19. suspend (Flow<Message<T>>) -> Flow<Message<R>> -> functionSuspendFlowMessageToFlowMessage
+ * 14. (Message<T>) -> Message<R>  -> functionMessageToMessage, functionJavaMessageToMessage, functionKotlinMessageToMessage
+ * 15. suspend (Message<T>) -> Message<R> -> functionSuspendMessageToMessage, functionJavaSuspendMessageToMessage, functionKotlinSuspendMessageToMessage
+ * 16. (Mono<Message<T>>) -> Mono<Message<R>> -> functionMonoMessageToMonoMessage, functionJavaMonoMessageToMonoMessage, functionKotlinMonoMessageToMonoMessage
+ * 17. (Flux<Message<T>>) -> Flux<Message<R>> -> functionFluxMessageToFluxMessage, functionJavaFluxMessageToFluxMessage, functionKotlinFluxMessageToFluxMessage
+ * 18. (Flow<Message<T>>) -> Flow<Message<R>> -> functionFlowMessageToFlowMessage, functionJavaFlowMessageToFlowMessage, functionKotlinFlowMessageToFlowMessage
+ * 19. suspend (Flow<Message<T>>) -> Flow<Message<R>> -> functionSuspendFlowMessageToFlowMessage, functionJavaSuspendFlowMessageToFlowMessage, functionKotlinSuspendFlowMessageToFlowMessage
  */
 @FunctionalSpringBootTest
 @AutoConfigureWebTestClient
@@ -71,7 +73,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 1. (T) -> R -> functionPlainToPlain
+	 * 1. (T) -> R -> functionPlainToPlain, functionJavaPlainToPlain, functionKotlinPlainToPlain
 	 * Takes a String, returns its length (Int).
 	 *
 	 * --- Input: ---
@@ -83,10 +85,11 @@ class KotlinFunctionExamplesTest {
 	 * Status: 200 OK
 	 * 5
 	 */
-	@Test
-	fun testFunctionPlainToPlain() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionPlainToPlain", "functionJavaPlainToPlain", "functionKotlinPlainToPlain"])
+	fun testFunctionPlainToPlain(name: String) {
 		webTestClient.post()
-			.uri("/functionPlainToPlain")
+			.uri("/$name")
 			.bodyValue("Hello")
 			.exchange()
 			.expectStatus().isOk
@@ -95,7 +98,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 2. (T) -> Flow<R> -> functionPlainToFlow
+	 * 2. (T) -> Flow<R> -> functionPlainToFlow, functionJavaPlainToFlow, functionKotlinPlainToFlow
 	 * Takes a String, returns a Flow of its characters.
 	 *
 	 * --- Input: ---
@@ -106,10 +109,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * ["t","e","s","t"]
 	 */
-	@Test
-	fun testFunctionPlainToFlow() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionPlainToFlow", "functionJavaPlainToFlow", "functionKotlinPlainToFlow"])
+	fun testFunctionPlainToFlow(name: String) {
 		webTestClient.post()
-			.uri("/functionPlainToFlow")
+			.uri("/$name")
 			.bodyValue("test")
 			.exchange()
 			.expectStatus().isOk
@@ -118,7 +122,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 3. (Flow<T>) -> R -> functionFlowToPlain
+	 * 3. (Flow<T>) -> R -> functionFlowToPlain, functionJavaFlowToPlain, functionKotlinFlowToPlain
 	 * Takes a Flow of Strings, returns an Int count of items.
 	 *
 	 * --- Input: ---
@@ -130,10 +134,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * [3]
 	 */
-	@Test
-	fun testFunctionFlowToPlain() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionFlowToPlain", "functionJavaFlowToPlain", "functionKotlinFlowToPlain"])
+	fun testFunctionFlowToPlain(name: String) {
 		webTestClient.post()
-			.uri("/functionFlowToPlain")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("one", "two", "three"))
 			.exchange()
@@ -144,7 +149,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 4. (Flow<T>) -> Flow<R> -> functionFlowToFlow
+	 * 4. (Flow<T>) -> Flow<R> -> functionFlowToFlow, functionJavaFlowToFlow, functionKotlinFlowToFlow
 	 * Takes a Flow<Int>, returns a Flow<String>.
 	 *
 	 * --- Input: ---
@@ -156,10 +161,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * ["1","2","3"]
 	 */
-	@Test
-	fun testFunctionFlowToFlow() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionFlowToFlow", "functionJavaFlowToFlow", "functionKotlinFlowToFlow"])
+	fun testFunctionFlowToFlow(name: String) {
 		webTestClient.post()
-			.uri("/functionFlowToFlow")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf(1, 2, 3))
 			.exchange()
@@ -170,7 +176,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 5. suspend (T) -> R -> functionSuspendPlainToPlain
+	 * 5. suspend (T) -> R -> functionSuspendPlainToPlain, functionKotlinSuspendPlainToPlain
 	 * Suspending function that takes a String, returns Int (length).
 	 *
 	 * --- Input: ---
@@ -181,10 +187,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * [6]
 	 */
-	@Test
-	fun testFunctionSuspendPlainToPlain() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionSuspendPlainToPlain", "functionKotlinSuspendPlainToPlain"])
+	fun testFunctionSuspendPlainToPlain(name: String) {
 		webTestClient.post()
-			.uri("/functionSuspendPlainToPlain")
+			.uri("/$name")
 			.bodyValue("kotlin")
 			.exchange()
 			.expectStatus().isOk
@@ -194,7 +201,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 6. suspend (T) -> Flow<R> -> functionSuspendPlainToFlow
+	 * 6. suspend (T) -> Flow<R> -> functionSuspendPlainToFlow, functionKotlinSuspendPlainToFlow
 	 * Takes a String, returns a Flow of its characters.
 	 *
 	 * --- Input: ---
@@ -205,10 +212,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * ["d","e","m","o"]
 	 */
-	@Test
-	fun testFunctionSuspendPlainToFlow() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionSuspendPlainToFlow", "functionKotlinSuspendPlainToFlow"])
+	fun testFunctionSuspendPlainToFlow(name: String) {
 		webTestClient.post()
-			.uri("/functionSuspendPlainToFlow")
+			.uri("/$name")
 			.bodyValue("demo")
 			.exchange()
 			.expectStatus().isOk
@@ -217,7 +225,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 7. suspend (Flow<T>) -> R -> functionSuspendFlowToPlain
+	 * 7. suspend (Flow<T>) -> R -> functionSuspendFlowToPlain, functionKotlinSuspendFlowToPlain
 	 * Suspending function that takes a Flow of Strings, returns an Int count.
 	 *
 	 * --- Input: ---
@@ -229,10 +237,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * [2]
 	 */
-	@Test
-	fun testFunctionSuspendFlowToPlain() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionSuspendFlowToPlain", "functionKotlinSuspendFlowToPlain"])
+	fun testFunctionSuspendFlowToPlain(name: String) {
 		webTestClient.post()
-			.uri("/functionSuspendFlowToPlain")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("alpha", "beta"))
 			.exchange()
@@ -243,7 +252,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 8. suspend (Flow<T>) -> Flow<R> -> functionSuspendFlowToFlow
+	 * 8. suspend (Flow<T>) -> Flow<R> -> functionSuspendFlowToFlow, functionKotlinSuspendFlowToFlow
 	 * Suspending function that takes a Flow<String>, returns a Flow<String> (uppercase).
 	 *
 	 * --- Input: ---
@@ -255,10 +264,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * ["ABC","XYZ"]
 	 */
-	@Test
-	fun testFunctionSuspendFlowToFlow() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionSuspendFlowToFlow", "functionKotlinSuspendFlowToFlow"])
+	fun testFunctionSuspendFlowToFlow(name: String) {
 		webTestClient.post()
-			.uri("/functionSuspendFlowToFlow")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("abc", "xyz"))
 			.exchange()
@@ -268,7 +278,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 9. (T) -> Mono<R> -> functionPlainToMono
+	 * 9. (T) -> Mono<R> -> functionPlainToMono, functionJavaPlainToMono, functionKotlinPlainToMono
 	 * Takes a String, returns a Mono<Int> (length).
 	 *
 	 * --- Input: ---
@@ -279,10 +289,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * 7
 	 */
-	@Test
-	fun testFunctionPlainToMono() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionPlainToMono", "functionJavaPlainToMono", "functionKotlinPlainToMono"])
+	fun testFunctionPlainToMono(name: String) {
 		webTestClient.post()
-			.uri("/functionPlainToMono")
+			.uri("/$name")
 			.bodyValue("Reactor")
 			.exchange()
 			.expectStatus().isOk
@@ -291,7 +302,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 10. (T) -> Flux<R> -> functionPlainToFlux
+	 * 10. (T) -> Flux<R> -> functionPlainToFlux, functionJavaPlainToFlux, functionKotlinPlainToFlux
 	 * Takes a String, returns a Flux<String> (characters).
 	 *
 	 * --- Input: ---
@@ -302,10 +313,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * ["F","l","u","x"]
 	 */
-	@Test
-	fun testFunctionPlainToFlux() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionPlainToFlux", "functionJavaPlainToFlux", "functionKotlinPlainToFlux"])
+	fun testFunctionPlainToFlux(name: String) {
 		webTestClient.post()
-			.uri("/functionPlainToFlux")
+			.uri("/$name")
 			.bodyValue("Flux")
 			.exchange()
 			.expectStatus().isOk
@@ -314,7 +326,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 11. (Mono<T>) -> Mono<R> -> functionMonoToMono
+	 * 11. (Mono<T>) -> Mono<R> -> functionMonoToMono, functionJavaMonoToMono, functionKotlinMonoToMono
 	 * Takes a Mono<String>, returns a Mono<String> (uppercase).
 	 *
 	 * --- Input: ---
@@ -325,10 +337,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * "INPUT MONO"
 	 */
-	@Test
-	fun testFunctionMonoToMono() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionMonoToMono", "functionJavaMonoToMono", "functionKotlinMonoToMono"])
+	fun testFunctionMonoToMono(name: String) {
 		webTestClient.post()
-			.uri("/functionMonoToMono")
+			.uri("/$name")
 			.bodyValue("input mono")
 			.exchange()
 			.expectStatus().isOk
@@ -337,7 +350,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 12. (Flux<T>) -> Flux<R> -> functionFluxToFlux
+	 * 12. (Flux<T>) -> Flux<R> -> functionFluxToFlux, functionJavaFluxToFlux, functionKotlinFluxToFlux
 	 * Takes a Flux<String>, returns a Flux<Int> (lengths).
 	 *
 	 * --- Input: ---
@@ -349,10 +362,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * [3,5,4]
 	 */
-	@Test
-	fun testFunctionFluxToFlux() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionFluxToFlux", "functionJavaFluxToFlux", "functionKotlinFluxToFlux"])
+	fun testFunctionFluxToFlux(name: String) {
 		webTestClient.post()
-			.uri("/functionFluxToFlux")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("one", "three", "five"))
 			.exchange()
@@ -362,7 +376,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 13. (Flux<T>) -> Mono<R> -> functionFluxToMono
+	 * 13. (Flux<T>) -> Mono<R> -> functionFluxToMono, functionJavaFluxToMono, functionKotlinFluxToMono
 	 * Takes a Flux<String>, returns a Mono<Int> (count).
 	 *
 	 * --- Input: ---
@@ -374,10 +388,11 @@ class KotlinFunctionExamplesTest {
 	 * 200 OK
 	 * 4
 	 */
-	@Test
-	fun testFunctionFluxToMono() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionFluxToMono", "functionJavaFluxToMono", "functionKotlinFluxToMono"])
+	fun testFunctionFluxToMono(name: String) {
 		webTestClient.post()
-			.uri("/functionFluxToMono")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("a", "b", "c", "d"))
 			.exchange()
@@ -387,7 +402,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 14. (Message<T>) -> Message<R> -> functionMessageToMessage
+	 * 14. (Message<T>) -> Message<R> -> functionMessageToMessage, functionJavaMessageToMessage, functionKotlinMessageToMessage
 	 * Takes Message<String>, returns Message<Int> (length), adds header.
 	 *
 	 * --- Input: ---
@@ -401,24 +416,25 @@ class KotlinFunctionExamplesTest {
 	 * Header: myHeader=myValue
 	 * 12
 	 */
-	@Test
-	fun testFunctionMessageToMessage() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionMessageToMessage", "functionJavaMessageToMessage", "functionKotlinMessageToMessage"])
+	fun testFunctionMessageToMessage(name: String) {
 		webTestClient.post()
-			.uri("/functionMessageToMessage")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.header("myHeader", "myValue")
-			.bodyValue("message test")
+			.bodyValue("\"message test\"")
 			.exchange()
 			.expectStatus().isOk
 			.expectHeader().contentType(MediaType.APPLICATION_JSON)
 			.expectHeader().valueEquals("processed", "true")
 			.expectHeader().exists("myHeader")
 			.expectBody<Int>()
-			.isEqualTo(12)
+			.isEqualTo(14)
 	}
 
 	/**
-	 * 15. suspend (Message<T>) -> Message<R> -> functionSuspendMessageToMessage
+	 * 15. suspend (Message<T>) -> Message<R> -> functionSuspendMessageToMessage, functionKotlinSuspendMessageToMessage
 	 * Suspending function takes Message<String>, returns Message<Int>.
 	 *
 	 * --- Input: ---
@@ -434,26 +450,27 @@ class KotlinFunctionExamplesTest {
 	 * Header: another=value
 	 * 22
 	 */
-	@Test
-	fun testFunctionSuspendMessageToMessage() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionSuspendMessageToMessage", "functionKotlinSuspendMessageToMessage"])
+	fun testFunctionSuspendMessageToMessage(name: String) {
 		val inputId = UUID.randomUUID().toString()
 		webTestClient.post()
-			.uri("/functionSuspendMessageToMessage")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.header("original-id", inputId)
 			.header("another", "value")
-			.bodyValue("suspend msg")
+			.bodyValue("\"suspend msg\"")
 			.exchange()
 			.expectStatus().isOk
 			.expectHeader().valueEquals("suspend-processed", "true")
 			.expectHeader().valueEquals("original-id", inputId)
 			.expectHeader().exists("another")
 			.expectBody<List<Int>>()
-			.isEqualTo(listOf(22))
+			.isEqualTo(listOf(26))
 	}
 
 	/**
-	 * 16. (Mono<Message<T>>) -> Mono<Message<R>> -> functionMonoMessageToMonoMessage
+	 * 16. (Mono<Message<T>>) -> Mono<Message<R>> -> functionMonoMessageToMonoMessage, functionJavaMonoMessageToMonoMessage, functionKotlinMonoMessageToMonoMessage
 	 * Takes Mono<Message<String>>, returns Mono<Message<Int>> (hashcode).
 	 *
 	 * --- Input: ---
@@ -467,12 +484,13 @@ class KotlinFunctionExamplesTest {
 	 * Header: monoHeader=monoValue
 	 * <hashcode of "test mono message">
 	 */
-	@Test
-	fun testFunctionMonoMessageToMonoMessage() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionMonoMessageToMonoMessage", "functionJavaMonoMessageToMonoMessage", "functionKotlinMonoMessageToMonoMessage"])
+	fun testFunctionMonoMessageToMonoMessage(name: String) {
 		val inputPayload = "test mono message"
-		val expectedPayload = inputPayload.hashCode()
+		val expectedPayload = "test mono message".hashCode()
 		webTestClient.post()
-			.uri("/functionMonoMessageToMonoMessage")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.header("monoHeader", "monoValue")
 			.bodyValue(inputPayload)
@@ -485,7 +503,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 17. (Flux<Message<T>>) -> Flux<Message<R>> -> functionFluxMessageToFluxMessage
+	 * 17. (Flux<Message<T>>) -> Flux<Message<R>> -> functionFluxMessageToFluxMessage, functionJavaFluxMessageToFluxMessage, functionKotlinFluxMessageToFluxMessage
 	 * Takes Flux<Message<String>>, returns Flux<Message<String>> (uppercase).
 	 *
 	 * --- Input: ---
@@ -498,10 +516,11 @@ class KotlinFunctionExamplesTest {
 	 * ["MSG ONE", "MSG TWO"]
 	 * (Headers flux-processed=true on each message)
 	 */
-	@Test
-	fun testFunctionFluxMessageToFluxMessage() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionFluxMessageToFluxMessage", "functionJavaFluxMessageToFluxMessage", "functionKotlinFluxMessageToFluxMessage"])
+	fun testFunctionFluxMessageToFluxMessage(name: String) {
 		webTestClient.post()
-			.uri("/functionFluxMessageToFluxMessage")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("msg one", "msg two"))
 			.exchange()
@@ -511,7 +530,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 18. (Flow<Message<T>>) -> Flow<Message<R>> -> functionFlowMessageToFlowMessage
+	 * 18. (Flow<Message<T>>) -> Flow<Message<R>> -> functionFlowMessageToFlowMessage, functionJavaFlowMessageToFlowMessage, functionKotlinFlowMessageToFlowMessage
 	 * Takes Flow<Message<String>>, returns Flow<Message<String>> (reversed).
 	 *
 	 * --- Input: ---
@@ -524,10 +543,11 @@ class KotlinFunctionExamplesTest {
 	 * ["eno wolf", "owt wolf"]
 	 * (Headers flow-processed=true on each message)
 	 */
-	@Test
-	fun testFunctionFlowMessageToFlowMessage() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionFlowMessageToFlowMessage", "functionJavaFlowMessageToFlowMessage", "functionKotlinFlowMessageToFlowMessage"])
+	fun testFunctionFlowMessageToFlowMessage(name: String) {
 		webTestClient.post()
-			.uri("/functionFlowMessageToFlowMessage")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("flow one", "flow two"))
 			.exchange()
@@ -537,7 +557,7 @@ class KotlinFunctionExamplesTest {
 	}
 
 	/**
-	 * 19. suspend (Flow<Message<T>>) -> Flow<Message<R>> -> functionSuspendFlowMessageToFlowMessage
+	 * 19. suspend (Flow<Message<T>>) -> Flow<Message<R>> -> functionSuspendFlowMessageToFlowMessage, functionKotlinSuspendFlowMessageToFlowMessage
 	 * Suspending fn takes Flow<Message<String>>, returns Flow<Message<String>> (appended).
 	 *
 	 * --- Input: ---
@@ -550,10 +570,11 @@ class KotlinFunctionExamplesTest {
 	 * ["sus flow one SUSPEND", "sus flow two SUSPEND"]
 	 * (Headers suspend-flow-processed=true on each message)
 	 */
-	@Test
-	fun testFunctionSuspendFlowMessageToFlowMessage() {
+	@ParameterizedTest
+	@ValueSource(strings = ["functionSuspendFlowMessageToFlowMessage", "functionKotlinSuspendFlowMessageToFlowMessage"])
+	fun testFunctionSuspendFlowMessageToFlowMessage(name: String) {
 		webTestClient.post()
-			.uri("/functionSuspendFlowMessageToFlowMessage")
+			.uri("/$name")
 			.contentType(MediaType.APPLICATION_JSON)
 			.bodyValue(listOf("sus flow one", "sus flow two"))
 			.exchange()

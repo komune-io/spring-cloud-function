@@ -32,7 +32,7 @@ import reactor.core.publisher.Flux
  *
  */
 fun getSuspendingFunctionArgType(type: Type): ResolvableType {
-	return  ResolvableType.forType(getFlowTypeArguments(type))
+	return ResolvableType.forType(getFlowTypeArguments(type))
 }
 
 fun getSuspendingFunctionReturnType(type: Type): ResolvableType {
@@ -56,6 +56,10 @@ fun getFlowTypeArguments(type: Type): Type {
 	} else {
 		actualTypeArgument
 	}
+}
+
+fun hasFlowType(types: Array<Type>) : Boolean {
+	return types.any { isFlowType(it) }
 }
 
 fun isFlowType(type: Type): Boolean {
