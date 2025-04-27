@@ -8,7 +8,7 @@ import kotlin.reflect.typeOf
 import org.springframework.core.ResolvableType
 
 @OptIn(ExperimentalStdlibApi::class)
-class KotlinFunctionObjectToObjectWrapperTest {
+class KotlinFunctionPlainToPlainWrapperTest {
 
     // Sample function that transforms a String to an Int
     private val sampleFunction: (String) -> Int = { input ->
@@ -25,7 +25,7 @@ class KotlinFunctionObjectToObjectWrapperTest {
         )
 
         // When
-        val result = KotlinFunctionObjectToObjectWrapper.isValid(functionType, types)
+        val result = KotlinFunctionPlainToPlainWrapper.isValid(functionType, types)
 
         // Then
         assertThat(result).isTrue()
@@ -35,17 +35,15 @@ class KotlinFunctionObjectToObjectWrapperTest {
     fun `test asRegistrationFunction creates wrapper correctly`() {
         // Given
         val functionName = "testFunction"
-        val functionType = typeOf<(String) -> Int>().javaType
         val types = arrayOf<Type>(
             typeOf<String>().javaType,
             typeOf<Int>().javaType
         )
 
         // When
-        val wrapper = KotlinFunctionObjectToObjectWrapper.asRegistrationFunction(
+        val wrapper = KotlinFunctionPlainToPlainWrapper.asRegistrationFunction(
             functionName, 
             sampleFunction, 
-            functionType,
             types
         )
 
@@ -59,15 +57,13 @@ class KotlinFunctionObjectToObjectWrapperTest {
     fun `test apply method processes input correctly`() {
         // Given
         val functionName = "testFunction"
-        val functionType = typeOf<(String) -> Int>().javaType
         val types = arrayOf<Type>(
             typeOf<String>().javaType,
             typeOf<Int>().javaType
         )
-        val wrapper = KotlinFunctionObjectToObjectWrapper.asRegistrationFunction(
+        val wrapper = KotlinFunctionPlainToPlainWrapper.asRegistrationFunction(
             functionName, 
             sampleFunction, 
-            functionType,
             types
         )
         val input = "test input"
@@ -83,15 +79,13 @@ class KotlinFunctionObjectToObjectWrapperTest {
     fun `test invoke method processes input correctly`() {
         // Given
         val functionName = "testFunction"
-        val functionType = typeOf<(String) -> Int>().javaType
         val types = arrayOf<Type>(
             typeOf<String>().javaType,
             typeOf<Int>().javaType
         )
-        val wrapper = KotlinFunctionObjectToObjectWrapper.asRegistrationFunction(
+        val wrapper = KotlinFunctionPlainToPlainWrapper.asRegistrationFunction(
             functionName, 
             sampleFunction, 
-            functionType,
             types
         )
         val input = "another test"
@@ -112,10 +106,13 @@ class KotlinFunctionObjectToObjectWrapperTest {
             ResolvableType.forClass(String::class.java),
             ResolvableType.forClass(Int::class.java)
         )
-        val isSuspendFunction = false
-
         // When
-        val wrapper = KotlinFunctionObjectToObjectWrapper(sampleFunction, type, functionName, isSuspendFunction)
+        val wrapper =
+			KotlinFunctionPlainToPlainWrapper(
+				sampleFunction,
+				type,
+				functionName
+			)
 
         // Then
         assertThat(wrapper).isNotNull

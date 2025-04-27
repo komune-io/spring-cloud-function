@@ -7,6 +7,9 @@ import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
 import org.springframework.core.ResolvableType
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinSupplierPlainWrapperTest {
 

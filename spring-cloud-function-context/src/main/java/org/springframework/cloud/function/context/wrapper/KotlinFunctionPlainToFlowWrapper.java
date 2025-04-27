@@ -29,8 +29,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionPlainToFlowWrapper class serves as a bridge for Kotlin functions that take regular objects as input and produce Flow objects as output, converting them to Flux objects for seamless integration with Spring Cloud Function's reactive programming model.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinFunctionPlainToFlowWrapper implements KotlinFunctionWrapper, Function<Object, Flux<Object>>, Function1<Object, Flux<Object>> {
 
@@ -60,12 +61,6 @@ public final class KotlinFunctionPlainToFlowWrapper implements KotlinFunctionWra
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinFunctionPlainToFlowWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.type = null;
-	}
 
 	public KotlinFunctionPlainToFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;

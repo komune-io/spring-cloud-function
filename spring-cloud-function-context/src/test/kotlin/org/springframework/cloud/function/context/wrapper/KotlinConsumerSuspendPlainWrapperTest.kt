@@ -9,6 +9,9 @@ import org.springframework.core.ResolvableType
 import kotlin.Unit
 import kotlinx.coroutines.runBlocking
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinConsumerSuspendPlainWrapperTest {
 

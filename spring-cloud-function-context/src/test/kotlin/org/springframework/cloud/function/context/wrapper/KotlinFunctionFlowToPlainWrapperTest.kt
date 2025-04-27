@@ -11,6 +11,9 @@ import kotlinx.coroutines.runBlocking
 import org.springframework.core.ResolvableType
 import reactor.core.publisher.Flux
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinFunctionFlowToPlainWrapperTest {
 

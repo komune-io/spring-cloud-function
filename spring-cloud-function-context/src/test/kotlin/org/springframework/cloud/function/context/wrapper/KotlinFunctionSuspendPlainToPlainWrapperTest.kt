@@ -9,8 +9,11 @@ import org.springframework.core.ResolvableType
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
-class KotlinFunctionSuspendObjectToObjectWrapperTest {
+class KotlinFunctionSuspendPlainToPlainWrapperTest {
 
     // Sample suspend function that transforms a String to an Int
     private val sampleSuspendFunction: suspend (String) -> Int = { input ->
@@ -29,7 +32,7 @@ class KotlinFunctionSuspendObjectToObjectWrapperTest {
         )
 
         // When
-        val result = KotlinFunctionSuspendObjectToObjectWrapper.isValid(functionType, types)
+        val result = KotlinFunctionSuspendPlainToPlainWrapper.isValid(functionType, types)
 
         // Then
         assertThat(result).isTrue()
@@ -45,7 +48,7 @@ class KotlinFunctionSuspendObjectToObjectWrapperTest {
         )
 
         // When
-        val result = KotlinFunctionSuspendObjectToObjectWrapper.isValid(functionType, types)
+        val result = KotlinFunctionSuspendPlainToPlainWrapper.isValid(functionType, types)
 
         // Then
         assertThat(result).isFalse()
@@ -62,7 +65,7 @@ class KotlinFunctionSuspendObjectToObjectWrapperTest {
         )
 
         // When
-        val wrapper = KotlinFunctionSuspendObjectToObjectWrapper.asRegistrationFunction(functionName, sampleSuspendFunction, types)
+        val wrapper = KotlinFunctionSuspendPlainToPlainWrapper.asRegistrationFunction(functionName, sampleSuspendFunction, types)
 
         // Then
         assertThat(wrapper).isNotNull
@@ -79,7 +82,7 @@ class KotlinFunctionSuspendObjectToObjectWrapperTest {
             typeOf<kotlin.coroutines.Continuation<Int>>().javaType,
             typeOf<Int>().javaType
         )
-        val wrapper = KotlinFunctionSuspendObjectToObjectWrapper.asRegistrationFunction(functionName, sampleSuspendFunction, types)
+        val wrapper = KotlinFunctionSuspendPlainToPlainWrapper.asRegistrationFunction(functionName, sampleSuspendFunction, types)
         val input = "test input"
 
         // When
@@ -101,7 +104,7 @@ class KotlinFunctionSuspendObjectToObjectWrapperTest {
             typeOf<kotlin.coroutines.Continuation<Int>>().javaType,
             typeOf<Int>().javaType
         )
-        val wrapper = KotlinFunctionSuspendObjectToObjectWrapper.asRegistrationFunction(functionName, sampleSuspendFunction, types)
+        val wrapper = KotlinFunctionSuspendPlainToPlainWrapper.asRegistrationFunction(functionName, sampleSuspendFunction, types)
         val input = "another test"
 
         // When
@@ -128,7 +131,12 @@ class KotlinFunctionSuspendObjectToObjectWrapperTest {
         )
 
         // When
-        val wrapper = KotlinFunctionSuspendObjectToObjectWrapper(sampleSuspendFunction, type, functionName)
+        val wrapper =
+			KotlinFunctionSuspendPlainToPlainWrapper(
+				sampleSuspendFunction,
+				type,
+				functionName
+			)
 
         // Then
         assertThat(wrapper).isNotNull

@@ -21,61 +21,48 @@ import java.util.function.Function;
 
 import kotlin.jvm.functions.Function1;
 
-import org.springframework.cloud.function.context.config.CoroutinesUtils;
 import org.springframework.cloud.function.context.config.FunctionUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionObjectToObjectWrapper class serves as a wrapper for Kotlin functions, enabling seamless integration between Kotlin's functional types and Java's Function interface within the Spring Cloud Function framework.
  *
+ * @author Adrien Poupard
  */
-public final class KotlinFunctionObjectToObjectWrapper implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
+public final class KotlinFunctionPlainToPlainWrapper implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
 		return FunctionUtils.isValidKotlinFunction(functionType, types);
 	}
 
-	public static KotlinFunctionObjectToObjectWrapper asRegistrationFunction(
+	public static KotlinFunctionPlainToPlainWrapper asRegistrationFunction(
 		String functionName,
 		Object kotlinLambdaTarget,
-		Type functionType,
 		Type[] propsTypes
 	) {
-		Boolean isSuspendFunction = FunctionUtils.isValidKotlinSuspendFunction(functionType, propsTypes);
 		ResolvableType type = ResolvableType.forClassWithGenerics(
 			Function.class,
 			ResolvableType.forType(propsTypes[0]),
 			ResolvableType.forType(propsTypes[1])
 		);
-		return new KotlinFunctionObjectToObjectWrapper(kotlinLambdaTarget, type, functionName, isSuspendFunction);
+		return new KotlinFunctionPlainToPlainWrapper(kotlinLambdaTarget, type, functionName);
 	}
 
 
 	private final Object kotlinLambdaTarget;
 	private final String name;
-	private final Boolean isSuspendFunction;
 	private final ResolvableType type;
 
-	public KotlinFunctionObjectToObjectWrapper(Object kotlinLambdaTarget, String functionName, Boolean isSuspendFunction) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.isSuspendFunction = isSuspendFunction;
-		this.type = null;
-	}
 
-	public KotlinFunctionObjectToObjectWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName, Boolean isSuspendFunction) {
+	public KotlinFunctionPlainToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
 		this.name = functionName;
-		this.isSuspendFunction = isSuspendFunction;
 		this.type = type;
 	}
 
 	@Override
 	public Object invoke(Object arg0) {
-		if (this.isSuspendFunction) {
-			return CoroutinesUtils.invokeSuspendingSingleFunction(kotlinLambdaTarget, arg0);
-		}
-		else if (this.kotlinLambdaTarget instanceof Function1) {
+		if (this.kotlinLambdaTarget instanceof Function1) {
 			return ((Function1<Object, Object>) this.kotlinLambdaTarget).invoke(arg0);
 		}
 		else if (this.kotlinLambdaTarget instanceof Function) {

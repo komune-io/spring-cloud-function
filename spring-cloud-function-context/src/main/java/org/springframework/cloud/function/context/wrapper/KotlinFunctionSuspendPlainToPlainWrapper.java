@@ -28,42 +28,36 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionSuspendObjectToObjectWrapper class serves as a bridge for Kotlin suspending functions that transform input objects to output objects, enabling their integration within the Spring Cloud Function framework's reactive programming model.
  *
+ * @author Adrien Poupard
  */
-public final class KotlinFunctionSuspendObjectToObjectWrapper implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
+public final class KotlinFunctionSuspendPlainToPlainWrapper implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
 		return FunctionUtils.isValidKotlinSuspendFunction(functionType, types);
 	}
 
-	public static KotlinFunctionSuspendObjectToObjectWrapper asRegistrationFunction(
+	public static KotlinFunctionSuspendPlainToPlainWrapper asRegistrationFunction(
 		String functionName,
 		Object kotlinLambdaTarget,
 		Type[] propsTypes
 	) {
-		ResolvableType agType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
+		ResolvableType argType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
 		ResolvableType returnType = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
 		ResolvableType functionType = ResolvableType.forClassWithGenerics(
 			Function.class,
-			agType,
+			argType,
 			ResolvableType.forClassWithGenerics(Flux.class, returnType)
 		);
-		return new KotlinFunctionSuspendObjectToObjectWrapper(kotlinLambdaTarget, functionType, functionName);
+		return new KotlinFunctionSuspendPlainToPlainWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
-
 
 	private final Object kotlinLambdaTarget;
 	private String name;
 	private final ResolvableType type;
 
-	public KotlinFunctionSuspendObjectToObjectWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.name = functionName;
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.type = null;
-	}
-
-	public KotlinFunctionSuspendObjectToObjectWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
+	public KotlinFunctionSuspendPlainToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.name = functionName;
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
 		this.type = type;

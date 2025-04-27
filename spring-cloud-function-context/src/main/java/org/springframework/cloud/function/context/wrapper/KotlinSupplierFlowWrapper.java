@@ -31,8 +31,9 @@ import org.springframework.core.ResolvableType;
 import static org.springframework.cloud.function.context.config.TypeUtils.convertToFlux;
 
 /**
- * @author Adrien Poupard
+ * The KotlinSupplierFlowWrapper class serves as a wrapper to integrate Kotlin's Function0 with Java's Supplier interface and transform Kotlin Flow objects to Reactor Flux objects, bridging functional paradigms between Kotlin and Java within the Spring Cloud Function framework.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinSupplierFlowWrapper implements KotlinFunctionWrapper, Supplier<Flux<Object>>, Function0<Flow<Object>> {
 

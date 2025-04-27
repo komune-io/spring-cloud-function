@@ -27,8 +27,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinConsumerPlainWrapper class serves as a bridge for Kotlin consumer functions that process regular objects, enabling their integration within the Spring Cloud Function framework.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinConsumerPlainWrapper implements KotlinFunctionWrapper, Consumer<Object> {
 
@@ -50,12 +51,6 @@ public final class KotlinConsumerPlainWrapper implements KotlinFunctionWrapper, 
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinConsumerPlainWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.name = functionName;
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.type = null;
-	}
 
 	public KotlinConsumerPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.name = functionName;

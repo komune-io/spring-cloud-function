@@ -7,6 +7,9 @@ import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
 import kotlin.Unit
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinConsumerPlainWrapperTest {
 

@@ -42,13 +42,14 @@ public final class KotlinUtils {
 			boolean isKotlinObject = KotlinDetector.isKotlinType(object.getClass())
 					|| object instanceof Function0<?>
 					|| object instanceof Function1<?, ?>;
-
-			if (functionType instanceof ParameterizedType) {
-				Type[] types = ((ParameterizedType) functionType).getActualTypeArguments();
-				return isKotlinObject || TypeUtils.hasFlowType(types);
+			if (isKotlinObject) {
+				return true;
 			}
-
-			return isKotlinObject;
+			else if (functionType instanceof ParameterizedType) {
+				Type[] types = ((ParameterizedType) functionType).getActualTypeArguments();
+				return TypeUtils.hasFlowType(types);
+			}
+			return false;
 		}
 		return false;
 	}

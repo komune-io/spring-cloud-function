@@ -28,10 +28,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * Wrapper for Kotlin suspending consumer functions that accept Flow inputs.
+ * The KotlinConsumerSuspendFlowWrapper class serves as a bridge for Kotlin suspending consumer functions that process Flow objects, enabling their integration within the Spring Cloud Function framework's reactive programming model.
  *
  * @author Adrien Poupard
- *
  */
 public final class KotlinConsumerSuspendFlowWrapper implements KotlinFunctionWrapper, Consumer<Flux<Object>> {
 
@@ -57,12 +56,6 @@ public final class KotlinConsumerSuspendFlowWrapper implements KotlinFunctionWra
 	private String name;
 	private final ResolvableType type;
 
-	public KotlinConsumerSuspendFlowWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.name = functionName;
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.type = null;
-	}
-
 	public KotlinConsumerSuspendFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.name = functionName;
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
@@ -81,6 +74,6 @@ public final class KotlinConsumerSuspendFlowWrapper implements KotlinFunctionWra
 
 	@Override
 	public void accept(Flux<Object> input) {
-		CoroutinesUtils.invokeSuspendingConsumer(kotlinLambdaTarget, input);
+		CoroutinesUtils.invokeSuspendingConsumerFlow(kotlinLambdaTarget, input);
 	}
 }

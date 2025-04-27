@@ -26,10 +26,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * Wrapper for Kotlin suspending consumer functions that accept regular (non-Flow) inputs.
+ * The KotlinConsumerSuspendPlainWrapper class serves as a bridge for Kotlin suspending consumer functions that process regular objects, enabling their integration within the Spring Cloud Function framework.
  *
  * @author Adrien Poupard
- *
  */
 public final class KotlinConsumerSuspendPlainWrapper implements KotlinFunctionWrapper, Consumer<Object> {
 

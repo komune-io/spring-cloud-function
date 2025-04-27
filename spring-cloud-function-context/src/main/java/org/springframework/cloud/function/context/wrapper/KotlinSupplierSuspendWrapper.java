@@ -28,8 +28,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
 /**
- * @author Adrien Poupard
+ * The KotlinSupplierSuspendWrapper class serves as a bridge between Kotlin suspending supplier functions and Java's Supplier interface, enabling seamless integration of Kotlin coroutines within the Spring Cloud Function framework.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinSupplierSuspendWrapper implements KotlinFunctionWrapper, Supplier<Object> {
 
@@ -54,12 +55,6 @@ public final class KotlinSupplierSuspendWrapper implements KotlinFunctionWrapper
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinSupplierSuspendWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.name = functionName;
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.type = null;
-	}
 
 	public KotlinSupplierSuspendWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.name = functionName;

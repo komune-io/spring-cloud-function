@@ -29,8 +29,12 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionSuspendFlowToFlowWrapper class serves as a wrapper for a Kotlin suspending function
+ * that consumes a Flow and produces a Flow. It adapts the Kotlin suspending function into a Java
+ * {@link Function} and provides support for integration with frameworks requiring reactive streams
+ * such as Reactor.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinFunctionSuspendFlowToFlowWrapper implements KotlinFunctionWrapper, Function<Flux<Object>, Flux<Object>>, Function1<Flux<Object>, Flux<Object>> {
 
@@ -46,12 +50,12 @@ public final class KotlinFunctionSuspendFlowToFlowWrapper implements KotlinFunct
 		Object kotlinLambdaTarget,
 		Type[] propsTypes
 	) {
-		ResolvableType props = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
-		ResolvableType result = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
+		ResolvableType argType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
+		ResolvableType returnType = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
 		ResolvableType functionType = ResolvableType.forClassWithGenerics(
 			Function.class,
-			ResolvableType.forClassWithGenerics(Flux.class, props),
-			ResolvableType.forClassWithGenerics(Flux.class, result)
+			ResolvableType.forClassWithGenerics(Flux.class, argType),
+			ResolvableType.forClassWithGenerics(Flux.class, returnType)
 		);
 		return new KotlinFunctionSuspendFlowToFlowWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
@@ -59,12 +63,6 @@ public final class KotlinFunctionSuspendFlowToFlowWrapper implements KotlinFunct
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinFunctionSuspendFlowToFlowWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.type = null;
-	}
 
 	public KotlinFunctionSuspendFlowToFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;

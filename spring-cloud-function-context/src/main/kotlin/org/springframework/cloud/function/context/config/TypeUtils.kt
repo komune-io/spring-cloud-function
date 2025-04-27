@@ -82,7 +82,6 @@ fun isContinuationFlowType(type: Type): Boolean {
 	return isContinuationType(type) && type.typeName.contains(Flow::class.qualifiedName!!)
 }
 
-
 internal fun getContinuationTypeArguments(type: Type): Type {
 	if(!isContinuationType(type)) {
 		return type
@@ -95,11 +94,10 @@ internal fun getContinuationTypeArguments(type: Type): Type {
 	}
 }
 
-
-fun asFlow(arg0: Flux<*>): Flow<Any> {
+fun <T : Any> asFlow(arg0: Flux<T>): Flow<T> {
 	return arg0.asFlow()
 }
 
-fun convertToFlux(arg0: Flow<Any>): Flux<Any> {
+fun <T : Any> convertToFlux(arg0: Flow<T>): Flux<T> {
 	return arg0.asFlux()
 }

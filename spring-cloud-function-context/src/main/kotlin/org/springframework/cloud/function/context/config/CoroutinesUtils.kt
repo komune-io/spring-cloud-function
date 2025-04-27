@@ -22,9 +22,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.mono
+import kotlinx.coroutines.suspendCancellableCoroutine
 import reactor.core.publisher.Flux
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
 
 /**
@@ -33,8 +36,15 @@ import reactor.core.publisher.Mono
  */
 private inline fun <O> executeInCoroutineAndConvertToFlux(crossinline block: (Continuation<O>) -> O): Flux<O> {
 	return mono(Dispatchers.Unconfined) {
-		suspendCoroutineUninterceptedOrReturn { continuation ->
-			block(continuation)
+		suspendCancellableCoroutine { continuation ->
+			try {
+				val result = block(continuation)
+				if (result != kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED) {
+					continuation.resume(result)
+				}
+			} catch (e: Exception) {
+				continuation.resumeWithException(e)
+			}
 		}
 	}.flatMapMany {
 		it.convertToFlux()
@@ -85,20 +95,21 @@ fun <I> invokeSuspendingConsumer(kotlinLambdaTarget: Any, arg0: I) {
 	@Suppress("UNCHECKED_CAST")
 	val consumer = kotlinLambdaTarget as SuspendConsumer<I>
 	executeInCoroutineAndConvertToFlux { continuation ->
-		// FIXME: This is a fix for KotlinConsumerSuspendWrapperTest  fun `test accept method processes input correctly`() {
-		when (arg0) {
-			is Flux<*> -> {
-				val flow = (arg0 as Flux<*>).asFlow()
-				@Suppress("UNCHECKED_CAST")
-				consumer.invoke(flow as I, continuation)
-			}
-			else -> consumer.invoke(arg0, continuation)
-		}
+		consumer.invoke(arg0, continuation)
 	}.subscribe()
 }
 
-private typealias SuspendFunction<I, O> = (I?, Continuation<O>) -> O
+fun <I: Any> invokeSuspendingConsumerFlow(kotlinLambdaTarget: Any, arg0: Flux<I>) {
+	@Suppress("UNCHECKED_CAST")
+	val consumer = kotlinLambdaTarget as SuspendConsumer<Flow<I>>
+	executeInCoroutineAndConvertToFlux { continuation ->
+		val flow = arg0.asFlow()
+		consumer.invoke(flow, continuation)
+	}.subscribe()
+}
 
-private typealias SuspendConsumer<I> = (I?, Continuation<Unit>) -> Unit?
+private typealias SuspendFunction<I, O> = Function2<I, Continuation<O>, O>
 
-private typealias SuspendSupplier<O> = (Continuation<O>) -> O
+private typealias SuspendConsumer<I> = Function2<I, Continuation<Unit>, Unit>
+
+private typealias SuspendSupplier<O> = Function1<Continuation<O>, O>

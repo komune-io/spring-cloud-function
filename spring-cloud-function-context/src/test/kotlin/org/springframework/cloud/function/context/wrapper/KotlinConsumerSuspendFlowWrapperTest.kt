@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import reactor.core.publisher.Flux
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinConsumerSuspendFlowWrapperTest {
 

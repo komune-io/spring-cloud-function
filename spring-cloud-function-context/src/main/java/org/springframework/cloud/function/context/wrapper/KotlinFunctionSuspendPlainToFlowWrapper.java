@@ -28,8 +28,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionSuspendPlainToFlowWrapper class serves as a bridge for Kotlin suspending functions that take regular objects as input and produce Flow objects as output, enabling their integration within the Spring Cloud Function framework's reactive programming model.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinFunctionSuspendPlainToFlowWrapper implements KotlinFunctionWrapper, Function<Object, Flux<Object>>, Function1<Object, Flux<Object>> {
 
@@ -45,12 +46,12 @@ public final class KotlinFunctionSuspendPlainToFlowWrapper implements KotlinFunc
 		Object kotlinLambdaTarget,
 		Type[] propsTypes
 	) {
-		ResolvableType props = ResolvableType.forType(propsTypes[0]);
-		ResolvableType result = ResolvableType.forClassWithGenerics(Flux.class, TypeUtils.getSuspendingFunctionArgType(propsTypes[0]));
+		ResolvableType argType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
+		ResolvableType returnType = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
 		ResolvableType functionType = ResolvableType.forClassWithGenerics(
 			Function.class,
-			props,
-			result
+			argType,
+			ResolvableType.forClassWithGenerics(Flux.class, returnType)
 		);
 		return new KotlinFunctionSuspendPlainToFlowWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
@@ -59,12 +60,6 @@ public final class KotlinFunctionSuspendPlainToFlowWrapper implements KotlinFunc
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinFunctionSuspendPlainToFlowWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.type = null;
-	}
 
 	public KotlinFunctionSuspendPlainToFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;

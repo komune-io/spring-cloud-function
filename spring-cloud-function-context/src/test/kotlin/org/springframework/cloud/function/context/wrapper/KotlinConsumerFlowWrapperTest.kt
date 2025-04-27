@@ -10,6 +10,9 @@ import kotlinx.coroutines.runBlocking
 import reactor.core.publisher.Flux
 import kotlin.Unit
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinConsumerFlowWrapperTest {
 

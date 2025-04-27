@@ -30,8 +30,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinConsumerFlowWrapper class serves as a wrapper for a Kotlin consumer function that consumes a Flow of objects and provides integration with Reactor's Flux API, bridging the gap between Kotlin's Flow and Java's reactive streams.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinConsumerFlowWrapper implements KotlinFunctionWrapper, Consumer<Flux<Object>>, Function1<Flux<Object>, Unit> {
 

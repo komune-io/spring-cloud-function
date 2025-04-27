@@ -28,8 +28,9 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionFlowToFlowWrapper class serves as a bridge for Kotlin functions that process Flow objects, converting both input and output between Kotlin's Flow and Java's Flux for seamless integration with Spring Cloud Function's reactive programming model.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrapper, Function<Flux<Object>, Flux<Object>>, Function1<Flux<Object>, Flux<Object>> {
 
@@ -59,12 +60,6 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinFunctionFlowToFlowWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.type = null;
-	}
 
 	public KotlinFunctionFlowToFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;

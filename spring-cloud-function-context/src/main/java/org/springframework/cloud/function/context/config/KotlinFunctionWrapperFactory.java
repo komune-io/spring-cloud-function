@@ -27,11 +27,11 @@ import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendF
 import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionFlowToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionFlowToPlainWrapper;
-import org.springframework.cloud.function.context.wrapper.KotlinFunctionObjectToObjectWrapper;
+import org.springframework.cloud.function.context.wrapper.KotlinFunctionPlainToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionPlainToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendFlowToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendFlowToPlainWrapper;
-import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendObjectToObjectWrapper;
+import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendPlainToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendPlainToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinSupplierFlowWrapper;
@@ -95,11 +95,11 @@ public final class KotlinFunctionWrapperFactory {
 		else if (KotlinConsumerSuspendPlainWrapper.isValid(functionType, types)) {
 			wrapper = KotlinConsumerSuspendPlainWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
 		}
-		else if (KotlinFunctionObjectToObjectWrapper.isValid(functionType, types)) {
-			wrapper = KotlinFunctionObjectToObjectWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, functionType, types);
+		else if (KotlinFunctionPlainToPlainWrapper.isValid(functionType, types)) {
+			wrapper = KotlinFunctionPlainToPlainWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
 		}
-		else if (KotlinFunctionSuspendObjectToObjectWrapper.isValid(functionType, types)) {
-			wrapper = KotlinFunctionSuspendObjectToObjectWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
+		else if (KotlinFunctionSuspendPlainToPlainWrapper.isValid(functionType, types)) {
+			wrapper = KotlinFunctionSuspendPlainToPlainWrapper.asRegistrationFunction(functionName, kotlinLambdaTarget, types);
 		}
 		if (wrapper == null) {
 			throw new IllegalStateException("Unable to create function wrapper for " + functionName);

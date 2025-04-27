@@ -11,6 +11,9 @@ import org.springframework.core.ResolvableType
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
+/*
+ * @author Adrien Poupard
+ */
 @OptIn(ExperimentalStdlibApi::class)
 class KotlinFunctionSuspendFlowToPlainWrapperTest {
 

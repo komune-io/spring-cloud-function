@@ -29,8 +29,11 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * @author Adrien Poupard
+ * The KotlinFunctionSuspendFlowToPlainWrapper class serves as a wrapper that adapts a Kotlin suspend
+ * function with a Flow input to a synchronous function, making it compatible with Java-based
+ * functional constructs such as {@link Function}.
  *
+ * @author Adrien Poupard
  */
 public final class KotlinFunctionSuspendFlowToPlainWrapper implements KotlinFunctionWrapper, Function<Flux<Object>, Object>, Function1<Flux<Object>, Object> {
 
@@ -47,11 +50,11 @@ public final class KotlinFunctionSuspendFlowToPlainWrapper implements KotlinFunc
 		Object kotlinLambdaTarget,
 		Type[] propsTypes
 	) {
-		ResolvableType props = ResolvableType.forClassWithGenerics(Flux.class, ResolvableType.forType(propsTypes[0]));
-		ResolvableType result = ResolvableType.forType(propsTypes[1]);
+		ResolvableType argType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
+		ResolvableType result = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
 		ResolvableType functionType = ResolvableType.forClassWithGenerics(
 			Function.class,
-			props,
+			ResolvableType.forClassWithGenerics(Flux.class, argType),
 			result
 		);
 		return new KotlinFunctionSuspendFlowToPlainWrapper(kotlinLambdaTarget, functionType, functionName);
@@ -61,12 +64,6 @@ public final class KotlinFunctionSuspendFlowToPlainWrapper implements KotlinFunc
 	private final Object kotlinLambdaTarget;
 	private final String name;
 	private final ResolvableType type;
-
-	public KotlinFunctionSuspendFlowToPlainWrapper(Object kotlinLambdaTarget, String functionName) {
-		this.kotlinLambdaTarget = kotlinLambdaTarget;
-		this.name = functionName;
-		this.type = null;
-	}
 
 	public KotlinFunctionSuspendFlowToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;

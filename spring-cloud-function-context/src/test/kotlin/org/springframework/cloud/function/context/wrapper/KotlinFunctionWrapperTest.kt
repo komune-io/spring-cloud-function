@@ -4,6 +4,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.core.ResolvableType
 
+/*
+ * @author Adrien Poupard
+ */
 class KotlinFunctionWrapperTest {
 
     // Simple implementation of KotlinFunctionWrapper for testing
