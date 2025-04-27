@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.function.context.wrapper;
 
-
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
 
@@ -31,23 +30,22 @@ import org.springframework.core.ResolvableType;
 import static org.springframework.cloud.function.context.config.TypeUtils.convertToFlux;
 
 /**
- * The KotlinSupplierFlowWrapper class serves as a wrapper to integrate Kotlin's Function0 with Java's Supplier interface and transform Kotlin Flow objects to Reactor Flux objects, bridging functional paradigms between Kotlin and Java within the Spring Cloud Function framework.
+ * The KotlinSupplierFlowWrapper class serves as a wrapper to integrate Kotlin's Function0
+ * with Java's Supplier interface and transform Kotlin Flow objects to Reactor Flux
+ * objects, bridging functional paradigms between Kotlin and Java within the Spring Cloud
+ * Function framework.
  *
  * @author Adrien Poupard
  */
-public final class KotlinSupplierFlowWrapper implements KotlinFunctionWrapper, Supplier<Flux<Object>>, Function0<Flow<Object>> {
+public final class KotlinSupplierFlowWrapper
+		implements KotlinFunctionWrapper, Supplier<Flux<Object>>, Function0<Flow<Object>> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return FunctionUtils.isValidKotlinSupplier(functionType)
-			&& types.length == 1
-			&& TypeUtils.isFlowType(types[0]);
+		return FunctionUtils.isValidKotlinSupplier(functionType) && types.length == 1 && TypeUtils.isFlowType(types[0]);
 	}
 
-	public static KotlinSupplierFlowWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinSupplierFlowWrapper asRegistrationFunction(String functionName, Object kotlinLambdaTarget,
+			Type[] propsTypes) {
 		Function0<Flow<Object>> target = (Function0<Flow<Object>>) kotlinLambdaTarget;
 
 		ResolvableType props = ResolvableType.forClassWithGenerics(Flux.class, ResolvableType.forType(propsTypes[0]));
@@ -56,12 +54,14 @@ public final class KotlinSupplierFlowWrapper implements KotlinFunctionWrapper, S
 		return new KotlinSupplierFlowWrapper(target, functionType, functionName);
 	}
 
-
 	private final Function0<Flow<Object>> kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
-	public KotlinSupplierFlowWrapper(Function0<Flow<Object>> kotlinLambdaTarget, ResolvableType type, String functionName) {
+	public KotlinSupplierFlowWrapper(Function0<Flow<Object>> kotlinLambdaTarget, ResolvableType type,
+			String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
 		this.type = type;
 		this.name = functionName;
@@ -87,4 +87,5 @@ public final class KotlinSupplierFlowWrapper implements KotlinFunctionWrapper, S
 	public Flow<Object> invoke() {
 		return kotlinLambdaTarget.invoke();
 	}
+
 }

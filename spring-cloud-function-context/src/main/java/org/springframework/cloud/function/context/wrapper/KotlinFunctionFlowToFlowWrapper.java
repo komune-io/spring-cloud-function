@@ -28,37 +28,32 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinFunctionFlowToFlowWrapper class serves as a bridge for Kotlin functions that process Flow objects, converting both input and output between Kotlin's Flow and Java's Flux for seamless integration with Spring Cloud Function's reactive programming model.
+ * The KotlinFunctionFlowToFlowWrapper class serves as a bridge for Kotlin functions that
+ * process Flow objects, converting both input and output between Kotlin's Flow and Java's
+ * Flux for seamless integration with Spring Cloud Function's reactive programming model.
  *
  * @author Adrien Poupard
  */
-public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrapper, Function<Flux<Object>, Flux<Object>>, Function1<Flux<Object>, Flux<Object>> {
+public final class KotlinFunctionFlowToFlowWrapper
+		implements KotlinFunctionWrapper, Function<Flux<Object>, Flux<Object>>, Function1<Flux<Object>, Flux<Object>> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return FunctionUtils.isValidKotlinFunction(functionType, types) &&
-				types.length == 2 &&
-				TypeUtils.isFlowType(types[0]) &&
-				TypeUtils.isFlowType(types[1]);
+		return FunctionUtils.isValidKotlinFunction(functionType, types) && types.length == 2
+				&& TypeUtils.isFlowType(types[0]) && TypeUtils.isFlowType(types[1]);
 	}
 
-	public static KotlinFunctionFlowToFlowWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinFunctionFlowToFlowWrapper asRegistrationFunction(String functionName, Object kotlinLambdaTarget,
+			Type[] propsTypes) {
 		ResolvableType props = ResolvableType.forClassWithGenerics(Flux.class, ResolvableType.forType(propsTypes[0]));
 		ResolvableType result = ResolvableType.forClassWithGenerics(Flux.class, ResolvableType.forType(propsTypes[1]));
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Function.class,
-			props,
-			result
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Function.class, props, result);
 		return new KotlinFunctionFlowToFlowWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
-
 	private final Object kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
 	public KotlinFunctionFlowToFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
@@ -67,12 +62,10 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 		this.type = type;
 	}
 
-
 	@Override
 	public Flux<Object> apply(Flux<Object> input) {
 		return this.invoke(input);
 	}
-
 
 	@Override
 	public Flux<Object> invoke(Flux<Object> arg0) {
@@ -99,4 +92,5 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 	public String getName() {
 		return this.name;
 	}
+
 }

@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.function.context.wrapper;
 
-
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
@@ -28,32 +27,30 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinConsumerSuspendFlowWrapper class serves as a bridge for Kotlin suspending consumer functions that process Flow objects, enabling their integration within the Spring Cloud Function framework's reactive programming model.
+ * The KotlinConsumerSuspendFlowWrapper class serves as a bridge for Kotlin suspending
+ * consumer functions that process Flow objects, enabling their integration within the
+ * Spring Cloud Function framework's reactive programming model.
  *
  * @author Adrien Poupard
  */
 public final class KotlinConsumerSuspendFlowWrapper implements KotlinFunctionWrapper, Consumer<Flux<Object>> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return FunctionUtils.isValidKotlinSuspendConsumer(functionType, types)
-			&& TypeUtils.isFlowType(types[0]);
+		return FunctionUtils.isValidKotlinSuspendConsumer(functionType, types) && TypeUtils.isFlowType(types[0]);
 	}
 
-	public static KotlinConsumerSuspendFlowWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinConsumerSuspendFlowWrapper asRegistrationFunction(String functionName,
+			Object kotlinLambdaTarget, Type[] propsTypes) {
 		ResolvableType continuationArgType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Consumer.class,
-			ResolvableType.forClassWithGenerics(Flux.class, continuationArgType)
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Consumer.class,
+				ResolvableType.forClassWithGenerics(Flux.class, continuationArgType));
 		return new KotlinConsumerSuspendFlowWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
 	private final Object kotlinLambdaTarget;
+
 	private String name;
+
 	private final ResolvableType type;
 
 	public KotlinConsumerSuspendFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
@@ -76,4 +73,5 @@ public final class KotlinConsumerSuspendFlowWrapper implements KotlinFunctionWra
 	public void accept(Flux<Object> input) {
 		CoroutinesUtils.invokeSuspendingConsumerFlow(kotlinLambdaTarget, input);
 	}
+
 }

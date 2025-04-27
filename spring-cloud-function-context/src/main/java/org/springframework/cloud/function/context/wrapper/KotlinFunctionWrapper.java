@@ -23,6 +23,9 @@ import org.springframework.core.ResolvableType;
  *
  */
 public interface KotlinFunctionWrapper {
+
 	ResolvableType getResolvableType();
+
 	String getName();
+
 }

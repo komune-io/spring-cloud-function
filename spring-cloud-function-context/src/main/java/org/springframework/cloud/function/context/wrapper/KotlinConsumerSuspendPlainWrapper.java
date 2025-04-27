@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.function.context.wrapper;
 
-
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
@@ -26,32 +25,29 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinConsumerSuspendPlainWrapper class serves as a bridge for Kotlin suspending consumer functions that process regular objects, enabling their integration within the Spring Cloud Function framework.
+ * The KotlinConsumerSuspendPlainWrapper class serves as a bridge for Kotlin suspending
+ * consumer functions that process regular objects, enabling their integration within the
+ * Spring Cloud Function framework.
  *
  * @author Adrien Poupard
  */
 public final class KotlinConsumerSuspendPlainWrapper implements KotlinFunctionWrapper, Consumer<Object> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return FunctionUtils.isValidKotlinSuspendConsumer(functionType, types)
-			&& !TypeUtils.isFlowType(types[0]);
+		return FunctionUtils.isValidKotlinSuspendConsumer(functionType, types) && !TypeUtils.isFlowType(types[0]);
 	}
 
-	public static KotlinConsumerSuspendPlainWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinConsumerSuspendPlainWrapper asRegistrationFunction(String functionName,
+			Object kotlinLambdaTarget, Type[] propsTypes) {
 		ResolvableType continuationArgType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Consumer.class,
-			continuationArgType
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Consumer.class, continuationArgType);
 		return new KotlinConsumerSuspendPlainWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
 	private final Object kotlinLambdaTarget;
+
 	private String name;
+
 	private final ResolvableType type;
 
 	public KotlinConsumerSuspendPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
@@ -74,4 +70,5 @@ public final class KotlinConsumerSuspendPlainWrapper implements KotlinFunctionWr
 	public void accept(Object input) {
 		CoroutinesUtils.invokeSuspendingConsumer(kotlinLambdaTarget, input);
 	}
+
 }

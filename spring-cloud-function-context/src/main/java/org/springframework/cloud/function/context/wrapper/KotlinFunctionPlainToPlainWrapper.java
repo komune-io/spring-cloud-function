@@ -25,34 +25,31 @@ import org.springframework.cloud.function.context.config.FunctionUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinFunctionObjectToObjectWrapper class serves as a wrapper for Kotlin functions, enabling seamless integration between Kotlin's functional types and Java's Function interface within the Spring Cloud Function framework.
+ * The KotlinFunctionObjectToObjectWrapper class serves as a wrapper for Kotlin functions,
+ * enabling seamless integration between Kotlin's functional types and Java's Function
+ * interface within the Spring Cloud Function framework.
  *
  * @author Adrien Poupard
  */
-public final class KotlinFunctionPlainToPlainWrapper implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
+public final class KotlinFunctionPlainToPlainWrapper
+		implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
 		return FunctionUtils.isValidKotlinFunction(functionType, types);
 	}
 
-	public static KotlinFunctionPlainToPlainWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
-		ResolvableType type = ResolvableType.forClassWithGenerics(
-			Function.class,
-			ResolvableType.forType(propsTypes[0]),
-			ResolvableType.forType(propsTypes[1])
-		);
+	public static KotlinFunctionPlainToPlainWrapper asRegistrationFunction(String functionName,
+			Object kotlinLambdaTarget, Type[] propsTypes) {
+		ResolvableType type = ResolvableType.forClassWithGenerics(Function.class, ResolvableType.forType(propsTypes[0]),
+				ResolvableType.forType(propsTypes[1]));
 		return new KotlinFunctionPlainToPlainWrapper(kotlinLambdaTarget, type, functionName);
 	}
 
-
 	private final Object kotlinLambdaTarget;
-	private final String name;
-	private final ResolvableType type;
 
+	private final String name;
+
+	private final ResolvableType type;
 
 	public KotlinFunctionPlainToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
@@ -85,4 +82,5 @@ public final class KotlinFunctionPlainToPlainWrapper implements KotlinFunctionWr
 	public Object apply(Object input) {
 		return this.invoke(input);
 	}
+
 }

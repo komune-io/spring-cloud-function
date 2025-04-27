@@ -57,11 +57,11 @@ private inline fun <O> executeInCoroutineAndConvertToFlux(crossinline block: (Co
  * @param value The value to convert
  * @return The value as a Flux
  */
-private fun <T> T?.convertToFlux(): Flux<T> {
+private fun <T> T?.convertToFlux(): Flux<T & Any> {
 	return when (this) {
-		is Flow<*> -> @Suppress("UNCHECKED_CAST") ((this as Flow<Any>).asFlux() as Flux<T>)
-		is Flux<*> -> @Suppress("UNCHECKED_CAST") (this as Flux<T>)
-		is Mono<*> -> @Suppress("UNCHECKED_CAST") (this.flatMapMany { Flux.just(it) } as Flux<T>)
+		is Flow<*> -> @Suppress("UNCHECKED_CAST") ((this as Flow<T & Any>).asFlux())
+		is Flux<*> -> @Suppress("UNCHECKED_CAST") (this as Flux<T & Any>)
+		is Mono<*> -> @Suppress("UNCHECKED_CAST") (this.flatMapMany { Flux.just(it) } as Flux<T & Any>)
 		null -> Flux.empty()
 		else -> Flux.just(this)
 	}

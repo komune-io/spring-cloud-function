@@ -28,36 +28,36 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinFunctionSuspendObjectToObjectWrapper class serves as a bridge for Kotlin suspending functions that transform input objects to output objects, enabling their integration within the Spring Cloud Function framework's reactive programming model.
+ * The KotlinFunctionSuspendObjectToObjectWrapper class serves as a bridge for Kotlin
+ * suspending functions that transform input objects to output objects, enabling their
+ * integration within the Spring Cloud Function framework's reactive programming model.
  *
  * @author Adrien Poupard
  */
-public final class KotlinFunctionSuspendPlainToPlainWrapper implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
+public final class KotlinFunctionSuspendPlainToPlainWrapper
+		implements KotlinFunctionWrapper, Function<Object, Object>, Function1<Object, Object> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
 		return FunctionUtils.isValidKotlinSuspendFunction(functionType, types);
 	}
 
-	public static KotlinFunctionSuspendPlainToPlainWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinFunctionSuspendPlainToPlainWrapper asRegistrationFunction(String functionName,
+			Object kotlinLambdaTarget, Type[] propsTypes) {
 		ResolvableType argType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
 		ResolvableType returnType = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Function.class,
-			argType,
-			ResolvableType.forClassWithGenerics(Flux.class, returnType)
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Function.class, argType,
+				ResolvableType.forClassWithGenerics(Flux.class, returnType));
 		return new KotlinFunctionSuspendPlainToPlainWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
 	private final Object kotlinLambdaTarget;
+
 	private String name;
+
 	private final ResolvableType type;
 
-	public KotlinFunctionSuspendPlainToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {
+	public KotlinFunctionSuspendPlainToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type,
+			String functionName) {
 		this.name = functionName;
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
 		this.type = type;
@@ -82,4 +82,5 @@ public final class KotlinFunctionSuspendPlainToPlainWrapper implements KotlinFun
 	public Object apply(Object input) {
 		return this.invoke(input);
 	}
+
 }

@@ -28,37 +28,32 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinFunctionFlowToPlainWrapper class serves as a bridge for Kotlin functions that take Flow objects as input and produce regular objects as output, enabling their integration within the Spring Cloud Function framework's reactive programming model.
+ * The KotlinFunctionFlowToPlainWrapper class serves as a bridge for Kotlin functions that
+ * take Flow objects as input and produce regular objects as output, enabling their
+ * integration within the Spring Cloud Function framework's reactive programming model.
  *
  * @author Adrien Poupard
  */
-public final class KotlinFunctionFlowToPlainWrapper implements KotlinFunctionWrapper, Function<Flux<Object>, Object>, Function1<Flux<Object>, Object> {
+public final class KotlinFunctionFlowToPlainWrapper
+		implements KotlinFunctionWrapper, Function<Flux<Object>, Object>, Function1<Flux<Object>, Object> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return  FunctionUtils.isValidKotlinFunction(functionType, types)
-				&& types.length == 2
-				&& TypeUtils.isFlowType(types[0])
-				&& !TypeUtils.isFlowType(types[1]);
+		return FunctionUtils.isValidKotlinFunction(functionType, types) && types.length == 2
+				&& TypeUtils.isFlowType(types[0]) && !TypeUtils.isFlowType(types[1]);
 	}
 
-	public static KotlinFunctionFlowToPlainWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinFunctionFlowToPlainWrapper asRegistrationFunction(String functionName,
+			Object kotlinLambdaTarget, Type[] propsTypes) {
 		ResolvableType props = ResolvableType.forClassWithGenerics(Flux.class, ResolvableType.forType(propsTypes[0]));
 		ResolvableType result = ResolvableType.forType(propsTypes[1]);
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Function.class,
-			props,
-			result
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Function.class, props, result);
 		return new KotlinFunctionFlowToPlainWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
-
 	private final Object kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
 	public KotlinFunctionFlowToPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {

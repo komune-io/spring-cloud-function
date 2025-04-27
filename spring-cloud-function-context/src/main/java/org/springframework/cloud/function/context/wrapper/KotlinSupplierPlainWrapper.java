@@ -26,7 +26,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
 /**
- * The KotlinSupplierPlainWrapper class serves as a bridge for Kotlin supplier functions that return regular objects, enabling their integration within the Spring Cloud Function framework.
+ * The KotlinSupplierPlainWrapper class serves as a bridge for Kotlin supplier functions
+ * that return regular objects, enabling their integration within the Spring Cloud
+ * Function framework.
  *
  * @author Adrien Poupard
  *
@@ -37,17 +39,17 @@ public final class KotlinSupplierPlainWrapper implements KotlinFunctionWrapper, 
 		return FunctionUtils.isValidKotlinSupplier(functionType);
 	}
 
-	public static KotlinSupplierPlainWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(Supplier.class, ResolvableType.forType(propsTypes[0]));
+	public static KotlinSupplierPlainWrapper asRegistrationFunction(String functionName, Object kotlinLambdaTarget,
+			Type[] propsTypes) {
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Supplier.class,
+				ResolvableType.forType(propsTypes[0]));
 		return new KotlinSupplierPlainWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
 	private final Object kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
 	public KotlinSupplierPlainWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {

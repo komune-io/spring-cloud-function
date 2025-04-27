@@ -28,7 +28,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.ObjectUtils;
 
 /**
- * The KotlinSupplierSuspendWrapper class serves as a bridge between Kotlin suspending supplier functions and Java's Supplier interface, enabling seamless integration of Kotlin coroutines within the Spring Cloud Function framework.
+ * The KotlinSupplierSuspendWrapper class serves as a bridge between Kotlin suspending
+ * supplier functions and Java's Supplier interface, enabling seamless integration of
+ * Kotlin coroutines within the Spring Cloud Function framework.
  *
  * @author Adrien Poupard
  */
@@ -38,22 +40,18 @@ public final class KotlinSupplierSuspendWrapper implements KotlinFunctionWrapper
 		return FunctionUtils.isValidKotlinSuspendSupplier(functionType, types);
 	}
 
-	public static KotlinSupplierSuspendWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinSupplierSuspendWrapper asRegistrationFunction(String functionName, Object kotlinLambdaTarget,
+			Type[] propsTypes) {
 		ResolvableType returnType = TypeUtils.getSuspendingFunctionReturnType(propsTypes[0]);
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Supplier.class,
-			ResolvableType.forClassWithGenerics(Flux.class, returnType)
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Supplier.class,
+				ResolvableType.forClassWithGenerics(Flux.class, returnType));
 		return new KotlinSupplierSuspendWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
-
 	private final Object kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
 	public KotlinSupplierSuspendWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {

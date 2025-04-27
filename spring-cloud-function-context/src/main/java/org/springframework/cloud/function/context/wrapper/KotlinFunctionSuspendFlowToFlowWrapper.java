@@ -29,39 +29,35 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinFunctionSuspendFlowToFlowWrapper class serves as a wrapper for a Kotlin suspending function
- * that consumes a Flow and produces a Flow. It adapts the Kotlin suspending function into a Java
- * {@link Function} and provides support for integration with frameworks requiring reactive streams
- * such as Reactor.
+ * The KotlinFunctionSuspendFlowToFlowWrapper class serves as a wrapper for a Kotlin
+ * suspending function that consumes a Flow and produces a Flow. It adapts the Kotlin
+ * suspending function into a Java {@link Function} and provides support for integration
+ * with frameworks requiring reactive streams such as Reactor.
  *
  * @author Adrien Poupard
  */
-public final class KotlinFunctionSuspendFlowToFlowWrapper implements KotlinFunctionWrapper, Function<Flux<Object>, Flux<Object>>, Function1<Flux<Object>, Flux<Object>> {
+public final class KotlinFunctionSuspendFlowToFlowWrapper
+		implements KotlinFunctionWrapper, Function<Flux<Object>, Flux<Object>>, Function1<Flux<Object>, Flux<Object>> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return  FunctionUtils.isValidKotlinSuspendFunction(functionType, types) &&
-			types.length == 3 &&
-			TypeUtils.isFlowType(types[0]) &&
-			TypeUtils.isContinuationFlowType(types[1]);
+		return FunctionUtils.isValidKotlinSuspendFunction(functionType, types) && types.length == 3
+				&& TypeUtils.isFlowType(types[0]) && TypeUtils.isContinuationFlowType(types[1]);
 	}
 
-	public static KotlinFunctionSuspendFlowToFlowWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinFunctionSuspendFlowToFlowWrapper asRegistrationFunction(String functionName,
+			Object kotlinLambdaTarget, Type[] propsTypes) {
 		ResolvableType argType = TypeUtils.getSuspendingFunctionArgType(propsTypes[0]);
 		ResolvableType returnType = TypeUtils.getSuspendingFunctionReturnType(propsTypes[1]);
-		ResolvableType functionType = ResolvableType.forClassWithGenerics(
-			Function.class,
-			ResolvableType.forClassWithGenerics(Flux.class, argType),
-			ResolvableType.forClassWithGenerics(Flux.class, returnType)
-		);
+		ResolvableType functionType = ResolvableType.forClassWithGenerics(Function.class,
+				ResolvableType.forClassWithGenerics(Flux.class, argType),
+				ResolvableType.forClassWithGenerics(Flux.class, returnType));
 		return new KotlinFunctionSuspendFlowToFlowWrapper(kotlinLambdaTarget, functionType, functionName);
 	}
 
 	private final Object kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
 	public KotlinFunctionSuspendFlowToFlowWrapper(Object kotlinLambdaTarget, ResolvableType type, String functionName) {

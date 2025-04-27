@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.function.context.wrapper;
 
-
 import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
@@ -30,34 +29,35 @@ import org.springframework.cloud.function.context.config.TypeUtils;
 import org.springframework.core.ResolvableType;
 
 /**
- * The KotlinConsumerFlowWrapper class serves as a wrapper for a Kotlin consumer function that consumes a Flow of objects and provides integration with Reactor's Flux API, bridging the gap between Kotlin's Flow and Java's reactive streams.
+ * The KotlinConsumerFlowWrapper class serves as a wrapper for a Kotlin consumer function
+ * that consumes a Flow of objects and provides integration with Reactor's Flux API,
+ * bridging the gap between Kotlin's Flow and Java's reactive streams.
  *
  * @author Adrien Poupard
  */
-public final class KotlinConsumerFlowWrapper implements KotlinFunctionWrapper, Consumer<Flux<Object>>, Function1<Flux<Object>, Unit> {
+public final class KotlinConsumerFlowWrapper
+		implements KotlinFunctionWrapper, Consumer<Flux<Object>>, Function1<Flux<Object>, Unit> {
 
 	public static Boolean isValid(Type functionType, Type[] types) {
-		return FunctionUtils.isValidKotlinConsumer(functionType, types)
-			&& TypeUtils.isFlowType(types[0]);
+		return FunctionUtils.isValidKotlinConsumer(functionType, types) && TypeUtils.isFlowType(types[0]);
 	}
 
-	public static KotlinConsumerFlowWrapper asRegistrationFunction(
-		String functionName,
-		Object kotlinLambdaTarget,
-		Type[] propsTypes
-	) {
+	public static KotlinConsumerFlowWrapper asRegistrationFunction(String functionName, Object kotlinLambdaTarget,
+			Type[] propsTypes) {
 		Function1<Flow<Object>, Unit> target = (Function1<Flow<Object>, Unit>) kotlinLambdaTarget;
 		ResolvableType props = ResolvableType.forClassWithGenerics(Flux.class, ResolvableType.forType(propsTypes[0]));
 		ResolvableType functionType = ResolvableType.forClassWithGenerics(Consumer.class, props);
 		return new KotlinConsumerFlowWrapper(target, functionType, functionName);
 	}
 
-
 	private final Function1<Flow<Object>, Unit> kotlinLambdaTarget;
+
 	private final String name;
+
 	private final ResolvableType type;
 
-	public KotlinConsumerFlowWrapper(Function1<Flow<Object>, Unit> kotlinLambdaTarget, ResolvableType type, String functionName) {
+	public KotlinConsumerFlowWrapper(Function1<Flow<Object>, Unit> kotlinLambdaTarget, ResolvableType type,
+			String functionName) {
 		this.kotlinLambdaTarget = kotlinLambdaTarget;
 		this.type = type;
 		this.name = functionName;
@@ -83,4 +83,5 @@ public final class KotlinConsumerFlowWrapper implements KotlinFunctionWrapper, C
 		Flow<Object> props = TypeUtils.convertToFlow(o);
 		return kotlinLambdaTarget.invoke(props);
 	}
+
 }

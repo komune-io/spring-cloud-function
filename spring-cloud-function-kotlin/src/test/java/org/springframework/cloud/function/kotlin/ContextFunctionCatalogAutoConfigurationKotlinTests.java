@@ -56,11 +56,8 @@ public class ContextFunctionCatalogAutoConfigurationKotlinTests {
 
 	@Test
 	public void typeDiscoveryTests() {
-		create(new Class[] { KotlinLambdasConfiguration.class,
-				SimpleConfiguration.class,
-				KotlinComponentFunction.class,
-				ComponentUppercase.class,
-				ComponentWithUnitReturn.class});
+		create(new Class[] { KotlinLambdasConfiguration.class, SimpleConfiguration.class, KotlinComponentFunction.class,
+				ComponentUppercase.class, ComponentWithUnitReturn.class });
 
 		FunctionCatalog functionCatalog = this.context.getBean(FunctionCatalog.class);
 
@@ -77,7 +74,8 @@ public class ContextFunctionCatalogAutoConfigurationKotlinTests {
 
 		FunctionInvocationWrapper componentWithUnitReturn = functionCatalog.lookup("componentWithUnitReturn");
 		assertThat(componentWithUnitReturn.isConsumer()).isTrue();
-		assertThat(componentWithUnitReturn.getInputType()).isEqualTo(ResolvableType.forClassWithGenerics(Message.class, String.class).getType());
+		assertThat(componentWithUnitReturn.getInputType())
+			.isEqualTo(ResolvableType.forClassWithGenerics(Message.class, String.class).getType());
 
 		FunctionInvocationWrapper kotlinConsumer = functionCatalog.lookup("kotlinConsumer");
 		assertThat(kotlinConsumer.isConsumer()).isTrue();
@@ -94,7 +92,8 @@ public class ContextFunctionCatalogAutoConfigurationKotlinTests {
 
 		FunctionInvocationWrapper kotlinListPojoFunction = functionCatalog.lookup("kotlinListPojoFunction");
 		assertThat(kotlinListPojoFunction.isFunction()).isTrue();
-		assertThat(kotlinListPojoFunction.getInputType().getTypeName()).isEqualTo("java.util.List<org.springframework.cloud.function.kotlin.Person>");
+		assertThat(kotlinListPojoFunction.getInputType().getTypeName())
+			.isEqualTo("java.util.List<org.springframework.cloud.function.kotlin.Person>");
 		assertThat(kotlinListPojoFunction.getOutputType()).isEqualTo(String.class);
 
 		FunctionInvocationWrapper componentUppercase = functionCatalog.lookup("componentUppercase");
