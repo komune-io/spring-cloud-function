@@ -56,6 +56,8 @@ import java.time.Duration
  * 17. (Flux<Message<T>>) -> Flux<Message<R>> -> functionKotlinFluxMessageToFluxMessage
  * 18. (Flow<Message<T>>) -> Flow<Message<R>> -> functionKotlinFlowMessageToFlowMessage
  * 19. suspend (Flow<Message<T>>) -> Flow<Message<R>> -> functionKotlinSuspendFlowMessageToFlowMessage
+ *
+ * @author Adrien Poupard
  */
 @Configuration
 class KotlinFunctionKotlinExamples

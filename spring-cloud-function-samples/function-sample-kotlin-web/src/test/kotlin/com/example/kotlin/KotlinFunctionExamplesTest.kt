@@ -57,6 +57,8 @@ import java.util.UUID
  * 17. (Flux<Message<T>>) -> Flux<Message<R>> -> functionFluxMessageToFluxMessage, functionJavaFluxMessageToFluxMessage, functionKotlinFluxMessageToFluxMessage
  * 18. (Flow<Message<T>>) -> Flow<Message<R>> -> functionFlowMessageToFlowMessage, functionJavaFlowMessageToFlowMessage, functionKotlinFlowMessageToFlowMessage
  * 19. suspend (Flow<Message<T>>) -> Flow<Message<R>> -> functionSuspendFlowMessageToFlowMessage, functionJavaSuspendFlowMessageToFlowMessage, functionKotlinSuspendFlowMessageToFlowMessage
+ *
+ * @author Adrien Poupard
  */
 @FunctionalSpringBootTest
 @AutoConfigureWebTestClient

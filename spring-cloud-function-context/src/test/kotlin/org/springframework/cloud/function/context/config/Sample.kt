@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
+/*
+ * @author Adrien Poupard
+*/
 object Sample {
 	object Function {
 		/**
@@ -146,7 +149,6 @@ object Sample {
 //
 //		val supplier: java.lang.reflect.Type = typeOf<suspend () -> Any>().javaType
 //		val SuspendSupplier: java.lang.reflect.Type = typeOf<suspend () -> Any>().javaType
-// Existing:
 
 		val stringType: java.lang.reflect.Type = typeOf<String>().javaType
 		val intType: java.lang.reflect.Type = typeOf<Int>().javaType

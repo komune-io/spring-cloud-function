@@ -45,6 +45,7 @@ public final class KotlinUtils {
 			if (isKotlinObject) {
 				return true;
 			}
+			// Check if there is a flow type in the functionType it will be converted to a Flux
 			else if (functionType instanceof ParameterizedType) {
 				Type[] types = ((ParameterizedType) functionType).getActualTypeArguments();
 				return TypeUtils.hasFlowType(types);

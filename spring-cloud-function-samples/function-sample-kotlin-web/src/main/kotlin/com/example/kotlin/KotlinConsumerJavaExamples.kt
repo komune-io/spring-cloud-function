@@ -47,6 +47,8 @@ import reactor.core.publisher.Mono
  * 11. Consumer<Flux<Message<T>>>      -> consumerJavaFluxMessage
  * 12. Consumer<Flow<Message<T>>>      -> consumerJavaFlowMessage
  * 13. Consumer<Flow<Message<T>>> with suspend -> consumerJavaSuspendFlowMessage
+ *
+ * @author Adrien Poupard
  */
 @Configuration
 class KotlinConsumerJavaExamples {}

@@ -24,6 +24,8 @@ import kotlin.reflect.jvm.javaField
  *  14. (Flow<T>) -> Unit           -> consumerFlow
  *  15. suspend (T) -> Unit         -> consumerSuspendPlain
  *  16. suspend (Flow<T>) -> Unit   -> consumerSuspendFlow
+ *
+ *  @author Adrien Poupard
  */
 class KotlinTypeValidationTests {
 

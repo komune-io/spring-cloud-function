@@ -38,7 +38,10 @@ import org.springframework.cloud.function.context.wrapper.KotlinSupplierFlowWrap
 import org.springframework.cloud.function.context.wrapper.KotlinSupplierPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinSupplierSuspendWrapper;
 
-
+/**
+ * Factory for creating Kotlin function wrappers.
+ * @author Adrien Poupard
+ */
 public final class KotlinFunctionWrapperFactory {
 
 	private final Object kotlinLambdaTarget;

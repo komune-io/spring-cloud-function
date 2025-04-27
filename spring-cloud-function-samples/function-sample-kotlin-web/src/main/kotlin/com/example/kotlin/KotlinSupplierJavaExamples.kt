@@ -49,6 +49,8 @@ import java.util.UUID
  * 10. Supplier<Flux<Message<R>>>     -> supplierJavaFluxMessage
  * 11. Supplier<Flow<Message<R>>>     -> supplierJavaFlowMessage
  * 12. Supplier<Flow<Message<R>>> with suspend -> supplierJavaSuspendFlowMessage
+ *
+ * @author Adrien Poupard
  */
 @Configuration
 class KotlinSupplierJavaExamples

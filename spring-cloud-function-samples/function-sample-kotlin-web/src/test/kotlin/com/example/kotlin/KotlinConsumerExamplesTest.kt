@@ -46,6 +46,8 @@ import org.springframework.test.web.reactive.server.WebTestClient
  * 11. (Flux<Message<T>>) -> Unit  -> consumerFluxMessage
  * 12. (Flow<Message<T>>) -> Unit  -> consumerFlowMessage
  * 13. suspend (Flow<Message<T>>) -> Unit -> consumerSuspendFlowMessage
+ *
+ * @author Adrien Poupard
  */
 @FunctionalSpringBootTest
 @AutoConfigureWebTestClient

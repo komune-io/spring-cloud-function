@@ -20,7 +20,6 @@ import org.springframework.core.ResolvableType;
 
 /**
  * @author Adrien Poupard
- *
  */
 public interface KotlinFunctionWrapper {
 

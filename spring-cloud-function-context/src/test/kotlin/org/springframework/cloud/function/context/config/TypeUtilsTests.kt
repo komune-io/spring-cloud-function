@@ -14,7 +14,7 @@ import org.springframework.core.ResolvableType
 /**
  * Tests for TypeUtils.kt utility functions.
  *
- * @author AI Assistant
+ * @author Adrien Poupard
  */
 @OptIn(ExperimentalStdlibApi::class)
 class TypeUtilsTests {

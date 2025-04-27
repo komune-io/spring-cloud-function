@@ -42,6 +42,8 @@ import reactor.core.publisher.Mono
  * 11. (Flux<Message<T>>) -> Unit  -> consumerFluxMessage
  * 12. (Flow<Message<T>>) -> Unit  -> consumerFlowMessage
  * 13. suspend (Flow<Message<T>>) -> Unit -> consumerSuspendFlowMessage
+ *
+ *  @author Adrien Poupard
  */
 @Configuration
 class KotlinConsumerExamples {
