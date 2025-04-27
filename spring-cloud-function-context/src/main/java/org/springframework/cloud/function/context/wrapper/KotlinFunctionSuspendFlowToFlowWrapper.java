@@ -72,7 +72,7 @@ public final class KotlinFunctionSuspendFlowToFlowWrapper implements KotlinFunct
 
 	@Override
 	public Flux<Object> invoke(Flux<Object> arg0) {
-		Flow<Object> flow = TypeUtils.asFlow(arg0);
+		Flow<Object> flow = TypeUtils.convertToFlow(arg0);
 		return CoroutinesUtils.invokeSuspendingFlowFunction(kotlinLambdaTarget, flow);
 	}
 

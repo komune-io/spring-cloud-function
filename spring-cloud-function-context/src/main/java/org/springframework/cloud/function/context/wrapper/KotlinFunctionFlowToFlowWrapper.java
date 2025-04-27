@@ -76,7 +76,7 @@ public final class KotlinFunctionFlowToFlowWrapper implements KotlinFunctionWrap
 
 	@Override
 	public Flux<Object> invoke(Flux<Object> arg0) {
-		Flow<Object> flow = TypeUtils.asFlow(arg0);
+		Flow<Object> flow = TypeUtils.convertToFlow(arg0);
 		if (kotlinLambdaTarget instanceof Function1) {
 			Function1<Flow<Object>, Flow<Object>> target = (Function1<Flow<Object>, Flow<Object>>) kotlinLambdaTarget;
 			Flow<Object> result = target.invoke(flow);

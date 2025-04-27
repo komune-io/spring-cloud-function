@@ -80,7 +80,7 @@ public final class KotlinConsumerFlowWrapper implements KotlinFunctionWrapper, C
 
 	@Override
 	public Unit invoke(Flux<Object> o) {
-		Flow<Object> props = TypeUtils.asFlow(o);
+		Flow<Object> props = TypeUtils.convertToFlow(o);
 		return kotlinLambdaTarget.invoke(props);
 	}
 }

@@ -94,7 +94,7 @@ internal fun getContinuationTypeArguments(type: Type): Type {
 	}
 }
 
-fun <T : Any> asFlow(arg0: Flux<T>): Flow<T> {
+fun <T : Any> convertToFlow(arg0: Flux<T>): Flow<T> {
 	return arg0.asFlow()
 }
 

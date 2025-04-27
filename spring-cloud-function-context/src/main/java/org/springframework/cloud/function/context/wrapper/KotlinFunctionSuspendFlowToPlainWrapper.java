@@ -78,7 +78,7 @@ public final class KotlinFunctionSuspendFlowToPlainWrapper implements KotlinFunc
 
 	@Override
 	public Object invoke(Flux<Object> arg0) {
-		Flow<Object> flow = TypeUtils.asFlow(arg0);
+		Flow<Object> flow = TypeUtils.convertToFlow(arg0);
 		return CoroutinesUtils.invokeSuspendingFlowFunction(kotlinLambdaTarget, flow);
 	}
 
