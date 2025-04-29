@@ -27,12 +27,12 @@ import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendF
 import org.springframework.cloud.function.context.wrapper.KotlinConsumerSuspendPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionFlowToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionFlowToPlainWrapper;
-import org.springframework.cloud.function.context.wrapper.KotlinFunctionPlainToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionPlainToFlowWrapper;
+import org.springframework.cloud.function.context.wrapper.KotlinFunctionPlainToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendFlowToFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendFlowToPlainWrapper;
-import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendPlainToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendPlainToFlowWrapper;
+import org.springframework.cloud.function.context.wrapper.KotlinFunctionSuspendPlainToPlainWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinFunctionWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinSupplierFlowWrapper;
 import org.springframework.cloud.function.context.wrapper.KotlinSupplierPlainWrapper;
