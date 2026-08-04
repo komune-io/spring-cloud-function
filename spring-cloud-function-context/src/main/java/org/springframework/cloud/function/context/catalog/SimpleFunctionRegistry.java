@@ -79,6 +79,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 
 
@@ -927,7 +928,19 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 					logger.debug("Actual input represents a collection while input type of the function does not represent a collection. " +
 						"Therefore framework will attempt invoke function for each element in the collection.");
 					MessageHeaders headers = input instanceof Message ? ((Message) input).getHeaders() : new MessageHeaders(Collections.emptyMap());
-					Collection collectionPayload = jsonMapper.fromJson(payload, Collection.class);
+					// KOMUNE Modification
+					// Collection Type is needed by kotlin serializer to deserialize object
+					// Original version:
+					// Collection collectionPayload = jsonMapper.fromJson(payload, Collection.class);
+					Type genType = FunctionTypeUtils.getGenericType(this.inputType);
+					ResolvableType resolvableType = ResolvableType.forType(genType);
+					if (resolvableType.toClass() == Message.class) {
+						resolvableType = resolvableType.getGeneric(0);
+					}
+					ResolvableType listType = ResolvableType.forClassWithGenerics(List.class, resolvableType);
+					Collection collectionPayload = jsonMapper.fromJson(payload, listType.getType());
+					// KOMUNE End Of Modification
+
 					Class inputClass = FunctionTypeUtils.getRawType(this.inputType);
 					if (this.isInputTypeMessage()) {
 						inputClass = FunctionTypeUtils.getRawType(FunctionTypeUtils.getImmediateGenericType(this.inputType, 0));
@@ -1570,6 +1583,12 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 						try {
 							return this.convertInputIfNecessary(v, actualType == null ? type : actualType);
 						}
+						// KOMUNE Modification
+						// force message conversion error propagation
+						catch (ResponseStatusException e) {
+							throw e;
+						}
+						// KOMUNE End Of Modification
 						catch (Exception e) {
 							throw new IllegalStateException("Failed to convert input", e);
 						}
@@ -1578,6 +1597,12 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 						try {
 							return this.convertInputIfNecessary(v, actualType == null ? type : actualType);
 						}
+						// KOMUNE Modification
+						// force message conversion error propagation
+						catch (ResponseStatusException e) {
+							throw e;
+						}
+						// KOMUNE End Of Modification
 						catch (Exception e) {
 							throw new IllegalStateException("Failed to convert input", e);
 						}
@@ -1594,6 +1619,12 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 						try {
 							return this.convertOutputIfNecessary(v, type, expectedOutputContentType);
 						}
+						// KOMUNE Modification
+						// force message conversion error propagation
+						catch (ResponseStatusException e) {
+							throw e;
+						}
+						// KOMUNE End Of Modification
 						catch (Exception e) {
 							throw new IllegalStateException("Failed to convert output", e);
 						}
@@ -1602,6 +1633,12 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 						try {
 							return this.convertOutputIfNecessary(v, type, expectedOutputContentType);
 						}
+						// KOMUNE Modification
+						// force message conversion error propagation
+						catch (ResponseStatusException e) {
+							throw e;
+						}
+						// KOMUNE End Of Modification
 						catch (Exception e) {
 							throw new IllegalStateException("Failed to convert output", e);
 						}
