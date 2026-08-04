@@ -40,8 +40,11 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.util.MimeType;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
+ * FIX KOMUNE - https://github.com/spring-cloud/spring-cloud-function/issues/901.
+ * Return an error instead of logging a warning when an object can't be parsed.
  *
  * @author Oleg Zhurakousky
  * @author Salvatore Bernardo
@@ -77,6 +80,12 @@ public class SmartCompositeMessageConverter extends CompositeMessageConverter {
 					return result;
 				}
 			}
+			// KOMUNE Modification
+			// force message conversion error propagation
+			catch (ResponseStatusException e) {
+				throw e;
+			}
+			// KOMUNE End Of Modification
 			catch (Exception e) {
 				if (logger.isWarnEnabled()) {
 					logger.warn("Failure during type conversion by " + converter + ". Will try the next converter.", e);

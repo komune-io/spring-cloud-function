@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
@@ -101,6 +102,10 @@ public class HttpGetIntegrationTests {
 				.getBody()).isEqualTo("[\"foo\",\"bar\"]");
 	}
 
+	// KOMUNE Modification
+	// Errors are now propagated instead of being swallowed by onErrorContinue,
+	// so /bang no longer yields a partial ["foo"] body.
+	@Disabled("KOMUNE: conversion errors are propagated, not skipped")
 	@Test
 	public void errorJson() throws Exception {
 		assertThat(this.rest

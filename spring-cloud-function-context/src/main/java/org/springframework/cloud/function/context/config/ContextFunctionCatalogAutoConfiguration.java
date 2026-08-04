@@ -217,6 +217,14 @@ public class ContextFunctionCatalogAutoConfiguration {
 		public JsonMapper jsonMapper(ApplicationContext context) {
 			String preferredMapper = context.getEnvironment().getProperty(JSON_MAPPER_PROPERTY);
 			if (StringUtils.hasText(preferredMapper)) {
+				// KOMUNE Modification
+				// Kept commented out here: KSerializationMapper lives in f2 (f2.spring.KSerializationMapper)
+				// and is not on this repository's classpath. The f2 vendored copy of this file enables it.
+				// if ("kSerialization".equals(preferredMapper) && ClassUtils.isPresent("kotlinx.serialization.json.Json", null)) {
+				//     return kSerialization(context);
+				// }
+				// else
+				// KOMUNE End Of Modification
 				if ("gson".equals(preferredMapper)) {
 					return gson(context);
 				}

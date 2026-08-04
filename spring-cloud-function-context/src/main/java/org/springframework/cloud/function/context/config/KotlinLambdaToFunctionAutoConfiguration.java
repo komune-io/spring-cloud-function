@@ -18,6 +18,8 @@ package org.springframework.cloud.function.context.config;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -213,28 +215,47 @@ public class KotlinLambdaToFunctionAutoConfiguration {
 				!isTypeRepresentedByClass(type[1], Unit.class);
 		}
 
+		// KOMUNE Modification
+		// Relaxed arity checks so Kotlin suspend lambdas declared without an explicit
+		// Continuation/Flow parameter are still detected, and match supertypes as well.
 		private boolean isValidKotlinSuspendSupplier(Type functionType, Type[] type) {
 			return isTypeRepresentedByClass(functionType, Function1.class) &&
-				type.length == 2 &&
-				CoroutinesUtils.isContinuationFlowType(type[0]);
+				(type.length == 1 || (type.length == 2 && CoroutinesUtils.isContinuationFlowType(type[0])));
 		}
 
 		private boolean isValidKotlinSuspendConsumer(Type functionType, Type[] type) {
 			return isTypeRepresentedByClass(functionType, Function2.class) &&
-				type.length == 3 &&
-				CoroutinesUtils.isFlowType(type[0]) &&
-				CoroutinesUtils.isContinuationUnitType(type[1]);
+				(
+					type.length == 1 ||
+						(type.length == 3 && CoroutinesUtils.isContinuationUnitType(type[1]) && CoroutinesUtils.isFlowType(type[0]))
+				);
 		}
 
 		private boolean isValidKotlinSuspendFunction(Type functionType, Type[] type) {
 			return isTypeRepresentedByClass(functionType, Function2.class) &&
-				type.length == 3 &&
-				CoroutinesUtils.isContinuationFlowType(type[1]);
+				((type.length == 3 && CoroutinesUtils.isContinuationFlowType(type[1]))
+					|| type.length == 2);
 		}
 
 		private boolean isTypeRepresentedByClass(Type type, Class<?> clazz) {
-			return type.getTypeName().contains(clazz.getName());
+			return concatWithSuperTypes(type)
+				.stream()
+				.map(Type::getTypeName)
+				.map(s -> s.contains(clazz.getName()))
+				.reduce((a, b) -> a || b)
+				.orElse(false);
 		}
+
+		private List<Type> concatWithSuperTypes(Type type) {
+			List<Type> all = new ArrayList<>();
+			all.add(type);
+			if (type instanceof ParameterizedType) {
+				Class<?>[] interfaces = ((Class<?>) ((ParameterizedType) type).getRawType()).getInterfaces();
+				all.addAll(List.of(interfaces));
+			}
+			return all;
+		}
+		// KOMUNE End Of Modification
 
 		public Class<?> getObjectType() {
 			return FunctionRegistration.class;
