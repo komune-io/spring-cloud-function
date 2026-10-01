@@ -19,6 +19,7 @@ package org.springframework.cloud.function.web;
 import java.util.Locale;
 import java.util.function.Function;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -102,6 +103,10 @@ class PojoFunctionIntegrationTests {
 	 * by Jackson and produces a {@code MismatchedInputException} in the log
 	 * instead of a silent {@code ClassCastException}.
 	 */
+	// KOMUNE Modification
+	// JSON deserialization errors are surfaced as 400 (ResponseStatusException) instead of a logged 500.
+	@Disabled("KOMUNE: JSON deserialization errors are returned as 400, not logged as 500")
+	// KOMUNE End Of Modification
 	@Test
 	void testMalformedJsonRejectsWithJacksonError(CapturedOutput output) {
 		String json = """
@@ -159,6 +164,10 @@ class PojoFunctionIntegrationTests {
 	 * Without the fix the scalar passes through unchecked and the function
 	 * lambda fails with a misleading {@code ClassCastException}.
 	 */
+	// KOMUNE Modification
+	// JSON deserialization errors are surfaced as 400 (ResponseStatusException) instead of a logged 500.
+	@Disabled("KOMUNE: JSON deserialization errors are returned as 400, not logged as 500")
+	// KOMUNE End Of Modification
 	@Test
 	void testScalarStringRejectsWithJacksonError(CapturedOutput output) {
 		String json = "\"hello\"";

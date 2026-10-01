@@ -42,7 +42,10 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<optional>true</optional>
+<!--			KOMUNE Modification-->
+<!--			Required: ResponseStatusException is used to propagate conversion errors-->
+<!--			<optional>true</optional>-->
+<!--			KOMUNE End Of Modification-->
 		</dependency>
 		<dependency>
 			<groupId>tools.jackson.module</groupId>

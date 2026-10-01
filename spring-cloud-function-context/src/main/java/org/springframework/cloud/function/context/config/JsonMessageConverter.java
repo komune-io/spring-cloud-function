@@ -26,12 +26,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
+
+import tools.jackson.databind.DatabindException;
 
 import org.springframework.cloud.function.cloudevent.CloudEventMessageUtils;
 import org.springframework.cloud.function.json.JsonMapper;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
@@ -41,6 +45,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeType;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Implementation of {@link MessageConverter} which uses Jackson or Gson libraries to do the
@@ -145,6 +150,12 @@ public class JsonMessageConverter extends AbstractMessageConverter {
 				if (message.getPayload() instanceof byte[] && String.class.isAssignableFrom(targetClass)) {
 					return new String((byte[]) message.getPayload(), StandardCharsets.UTF_8);
 				}
+				// KOMUNE Modification
+				// force message conversion error propagation
+				else if (isJsonContentType(message.getHeaders()) && e.getCause() instanceof DatabindException) {
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error parsing json", e.getCause());
+				}
+				// KOMUNE End Of Modification
 				else if (logger.isDebugEnabled()) {
 					Object payload = message.getPayload();
 					if (payload instanceof byte[]) {
@@ -166,6 +177,20 @@ public class JsonMessageConverter extends AbstractMessageConverter {
 		}
 		return jsonMapper.toJson(payload);
 	}
+
+	// KOMUNE Modification
+	private static boolean isJsonContentType(MessageHeaders headers) {
+		Object contentType = headers.get(MessageHeaders.CONTENT_TYPE);
+		if (contentType == null) {
+			contentType = headers.get("Content-Type");
+		}
+		if (contentType == null) {
+			contentType = headers.get("content-type");
+		}
+		return contentType != null
+				&& String.valueOf(contentType).toLowerCase(Locale.ROOT).contains("application/json");
+	}
+	// KOMUNE End Of Modification
 
 	private Type getResolvedType(Class<?> targetClass, @Nullable Object conversionHint) {
 		if (conversionHint instanceof MethodParameter param) {
