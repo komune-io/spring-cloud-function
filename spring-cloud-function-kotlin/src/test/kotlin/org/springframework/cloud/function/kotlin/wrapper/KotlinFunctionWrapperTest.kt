@@ -17,6 +17,7 @@ class KotlinFunctionWrapperTest {
     ) : KotlinFunctionWrapper {
         override fun getResolvableType(): ResolvableType = type
         override fun getName(): String = name
+        override fun getKotlinLambdaTarget(): Any = Unit
     }
 
     @Test

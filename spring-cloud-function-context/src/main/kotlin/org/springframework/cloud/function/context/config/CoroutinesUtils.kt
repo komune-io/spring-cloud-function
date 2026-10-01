@@ -34,7 +34,7 @@ import reactor.core.publisher.Mono
  * @author Adrien Poupard
  *
  */
-private inline fun <O> executeInCoroutineAndConvertToFlux(crossinline block: (Continuation<O>) -> O): Flux<O> {
+private inline fun <O : Any> executeInCoroutineAndConvertToFlux(crossinline block: (Continuation<O>) -> O): Flux<O> {
 	return mono(Dispatchers.Unconfined) {
 		suspendCancellableCoroutine { continuation ->
 			try {
@@ -67,7 +67,7 @@ private fun <T> T?.convertToFlux(): Flux<T & Any> {
 	}
 }
 
-fun <I, O> invokeSuspendingFlowFunction(kotlinLambdaTarget: Any, arg0: Flow<I>): Flux<O> {
+fun <I, O : Any> invokeSuspendingFlowFunction(kotlinLambdaTarget: Any, arg0: Flow<I>): Flux<O> {
 	try {
 		@Suppress("UNCHECKED_CAST")
 		val function = kotlinLambdaTarget as SuspendFunction<Flow<I>, O>
@@ -79,7 +79,7 @@ fun <I, O> invokeSuspendingFlowFunction(kotlinLambdaTarget: Any, arg0: Flow<I>):
 	}
 }
 
-fun <I, O> invokeSuspendingSingleFunction(kotlinLambdaTarget: Any, arg0: I): Flux<O> {
+fun <I, O : Any> invokeSuspendingSingleFunction(kotlinLambdaTarget: Any, arg0: I): Flux<O> {
 	try {
 		@Suppress("UNCHECKED_CAST")
 		val function = kotlinLambdaTarget as SuspendFunction<I, O>
@@ -91,7 +91,7 @@ fun <I, O> invokeSuspendingSingleFunction(kotlinLambdaTarget: Any, arg0: I): Flu
 	}
 }
 
-fun <O> invokeSuspendingSupplier(kotlinLambdaTarget: Any): Flux<O> {
+fun <O : Any> invokeSuspendingSupplier(kotlinLambdaTarget: Any): Flux<O> {
 	try {
 		@Suppress("UNCHECKED_CAST")
 		val supplier = kotlinLambdaTarget as SuspendSupplier<O>

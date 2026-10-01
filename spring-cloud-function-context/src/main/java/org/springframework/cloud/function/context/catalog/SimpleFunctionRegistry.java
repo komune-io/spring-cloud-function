@@ -57,8 +57,8 @@ import org.springframework.cloud.function.context.FunctionProperties.FunctionCon
 import org.springframework.cloud.function.context.FunctionRegistration;
 import org.springframework.cloud.function.context.FunctionRegistry;
 import org.springframework.cloud.function.context.PostProcessingFunction;
-import org.springframework.cloud.function.context.config.KotlinLambdaToFunctionAutoConfiguration;
 import org.springframework.cloud.function.context.config.RoutingFunction;
+import org.springframework.cloud.function.context.wrapper.KotlinFunctionWrapper;
 import org.springframework.cloud.function.core.FunctionInvocationHelper;
 import org.springframework.cloud.function.json.JsonMapper;
 import org.springframework.context.expression.BeanFactoryResolver;
@@ -489,7 +489,7 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 				this.postProcessor = postProcessingFunction;
 			}
 			if (ClassUtils.isPresent("kotlin.jvm.functions.Function0", ClassUtils.getDefaultClassLoader())
-				&& target instanceof KotlinLambdaToFunctionAutoConfiguration.KotlinFunctionWrapper kotlinFunction
+				&& target instanceof KotlinFunctionWrapper kotlinFunction
 				&& kotlinFunction.getKotlinLambdaTarget() instanceof PostProcessingFunction) {
 				this.postProcessor = (PostProcessingFunction) kotlinFunction.getKotlinLambdaTarget();
 			}
