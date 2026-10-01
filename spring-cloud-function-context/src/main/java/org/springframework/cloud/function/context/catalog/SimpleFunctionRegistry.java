@@ -1647,12 +1647,6 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 						try {
 							return this.convertOutputIfNecessary(v, type, expectedOutputContentType);
 						}
-						// KOMUNE Modification
-						// force message conversion error propagation
-						catch (ResponseStatusException e) {
-							throw e;
-						}
-						// KOMUNE End Of Modification
 						catch (Exception e) {
 							throw new IllegalStateException("Failed to convert output", e);
 						}
@@ -1661,12 +1655,6 @@ public class SimpleFunctionRegistry implements FunctionRegistry {
 						try {
 							return this.convertOutputIfNecessary(v, type, expectedOutputContentType);
 						}
-						// KOMUNE Modification
-						// force message conversion error propagation
-						catch (ResponseStatusException e) {
-							throw e;
-						}
-						// KOMUNE End Of Modification
 						catch (Exception e) {
 							throw new IllegalStateException("Failed to convert output", e);
 						}
