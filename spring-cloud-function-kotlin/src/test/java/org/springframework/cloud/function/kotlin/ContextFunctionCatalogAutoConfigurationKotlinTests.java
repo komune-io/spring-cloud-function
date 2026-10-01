@@ -29,7 +29,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.function.context.FunctionCatalog;
 import org.springframework.cloud.function.context.catalog.FunctionTypeUtils;
 import org.springframework.cloud.function.context.catalog.SimpleFunctionRegistry.FunctionInvocationWrapper;
-import org.springframework.cloud.function.context.config.KotlinLambdaToFunctionAutoConfiguration;
+import org.springframework.cloud.function.context.wrapper.KotlinFunctionWrapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
@@ -71,7 +71,7 @@ public class ContextFunctionCatalogAutoConfigurationKotlinTests {
 		kotlinPostProcessingFunction.apply("bob");
 		kotlinPostProcessingFunction.postProcess();
 		KotlinPostProcessingFunction postProcessingFunction =  (KotlinPostProcessingFunction)
-			((KotlinLambdaToFunctionAutoConfiguration.KotlinFunctionWrapper) kotlinPostProcessingFunction.getTarget()).getKotlinLambdaTarget();
+			((KotlinFunctionWrapper) kotlinPostProcessingFunction.getTarget()).getKotlinLambdaTarget();
 		assertThat(postProcessingFunction.getInvoked()).isTrue();
 		// End test post-processing logic
 
